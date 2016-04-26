@@ -1,0 +1,39 @@
+Functionalities, modules, actors of the system
+
+User types/roles:
+	- admin
+	- evaluator
+	- professor
+	- student
+
+Application modules:
+	- real-time monitoring/course for each course
+	- light:
+		- light sensor
+		- shutter controller
+		- lighting controller
+	- temperatur:
+		- temperature sensor		
+		- heating controller
+		- air conditioning
+	- TODO: 
+		- air composition analyser (oxygen, CO2 etc)
+	- social:
+		- questionnaire handling (web)app
+		- real-time feedback display
+
+Actors:
+	- Admin: 
+		- start system
+		- stop system
+		- add user
+		- remove user
+		- edit user
+		- 
+	- Evaluator:
+		- generate report
+	- Professor:
+		- 
+		- monitor real-time feedback of students
+	- Student:
+		- answer questionnaires

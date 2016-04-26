@@ -1,0 +1,9 @@
+- human action rendszeren kívül
+- use case túl absztrakt, konkrét action ök, on off
+- actor-onként aktor
+- domain elemei, fogalmak, action ök
+- overview use-case a végén
+- actor, szereplő nem device
+- amit nem a rendszer csinál, soha nem fog csinálni azt azért nem biztos h bele kell tenni use case be
+- actorok, use-case ek ömlesztve először
+- plusz funkcionalitások, brainstorming
