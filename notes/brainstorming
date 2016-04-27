@@ -2,6 +2,13 @@ Functionalities, modules, actors of the system
 
 - NoSQL for data storage (since its for anylising)
 
+
+Human-machine interface (based on use-case?):
+	- Administrator
+	- Non real-time monitoring
+	- Real-time monitoring
+	- Questionnaire conduction
+
 User types/roles:
 	- admin
 	- evaluator
@@ -70,8 +77,3 @@ Actors:
 		- answer questionnaires
 		- check-in to lectures
 
-
-Human-machine interface (based on use-case?):
-	- Administrator
-	- Non real-time monitoring
-	- Real-time monitoring
