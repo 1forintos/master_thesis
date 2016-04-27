@@ -1,39 +1,77 @@
 Functionalities, modules, actors of the system
 
+- NoSQL for data storage (since its for anylising)
+
 User types/roles:
 	- admin
 	- evaluator
 	- professor
 	- student
 
-Application modules:
-	- real-time monitoring/course for each course
-	- light:
+Application modules:	
+	Modules may be managed separately course by course
+
+	- lighting:
 		- light sensor
 		- shutter controller
-		- lighting controller
-	- temperatur:
+		- artificial light controller
+		- add day-time interval constraint (?)
+
+	- temperature:
 		- temperature sensor		
 		- heating controller
 		- air conditioning
+
 	- TODO: 
 		- air composition analyser (oxygen, CO2 etc)
+
 	- social:
-		- questionnaire handling (web)app
+		- questionnaire management
+		- questionnaire handling answering
 		- real-time feedback display
+		- alert on certain values
+
+	- Attendance/check-in system for lectures:
+		- device for check-in
+
+	- real-time monitoring of any module's data for each course
+		- divice for display
+
+	- anti-cheat:
+		- electro-magnetic or what sensors to detect cell/smartphone activity (while it is told to turn everything off)
+		- alert with location
 
 Actors:
 	- Admin: 
 		- start system
 		- stop system
-		- add user
-		- remove user
-		- edit user
-		- 
+		- add/remove/edit user	(manage?)	
+		- * module on/off
+		- edit automated light control settings:
+			- set thresholds of light sensor data to turn shutter/artificial lighting on/off (based on time of the day)
+		- edit automated temperature control settings:	
+			- set temperature threshold to turn on heat/air conditioning
+		- edit anti-cheat data alert threshold	
+		
 	- Evaluator:
-		- generate report
+		- add/delete/edit predefined reports
+		- generate reports
+
 	- Professor:
-		- 
+		- connect students list to course
+		- turn on/off light module for course
+		- control shutter/artificial lighting 		
+		- create/edit/delete questionnaires for the course (generalised role for questionnaires?)
+		- edit social result data thresholds for alert
 		- monitor real-time feedback of students
+		(- monitor anti-cheat sensor-web status)
+
 	- Student:
 		- answer questionnaires
+		- check-in to lectures
+
+
+Human-machine interface (based on use-case?):
+	- Administrator
+	- Non real-time monitoring
+	- Real-time monitoring
