@@ -10,6 +10,7 @@ Generalization of Turn on/off, Create/Modify/Remove
 
 BDD:
 	- in/out ports correct? physical input and control output?
+	- student action as input?
 	- user-defined events as input?
 
 MagicDraw:
@@ -19,6 +20,8 @@ Professor:
 	- Monitoring real-time feedback/anti-cheating as use-case bubbles?
 
 How to fit MAPE into use-cases?
+
+Social module + attendance? difference?
 
 Event VS Rule?
 
