@@ -1,6 +1,27 @@
+Manage * module: per course of global?
+
 Manage lighting/Shutter control:
 	- Set shutter closing event VS Set shutter closing luminocity threshold?
 	- same at temperature
 
+Login actions in use-case es? or a generalized User that can login/edit profile etc?
+
+Generalization of Turn on/off, Create/Modify/Remove
+
+MagicDraw:
+	- same use-case in different models
+
+Professor:
+	- Monitoring real-time feedback as a use-case bubble?
+
+Event VS Rule?
+
 English:
 	- Add day-time interval constraint (?)
+	- Turn shutter On/Off?
+
+Admin use-case:
+	- specialise * module management into different role and implement that into Admin and Others if needed?
+
+TODO
+	- create general Event workflow
