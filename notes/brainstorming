@@ -15,7 +15,7 @@ Application modules:
 		- light sensor
 		- shutter controller
 		- artificial light controller
-		- add day-time interval constraint (?)
+		- add day-time interval constraint
 
 	- temperature:
 		- temperature sensor		
@@ -38,8 +38,8 @@ Application modules:
 		- divice for display
 
 	- anti-cheat:
-		- electro-magnetic or what sensors to detect cell/smartphone activity (while it is told to turn everything off)
-		- alert with location
+		- electro-magnetic field or whatever sensors to detect cell/smartphone activity (while it is told to turn everything off, e.g.: during exams)
+		- alert with location in case of violation
 
 Actors:
 	- Admin: 
@@ -60,8 +60,8 @@ Actors:
 	- Professor:
 		- connect students list to course
 		- turn on/off light module for course
-		- control shutter/artificial lighting 		
-		- create/edit/delete questionnaires for the course (generalised role for questionnaires?)
+		- control shutter/artificial lighting // can be part of the system		
+		- create/edit/delete questionnaires for the course
 		- edit social result data thresholds for alert
 		- monitor real-time feedback of students
 		(- monitor anti-cheat sensor-web status)

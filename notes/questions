@@ -8,17 +8,24 @@ Login actions in use-case es? or a generalized User that can login/edit profile 
 
 Generalization of Turn on/off, Create/Modify/Remove
 
+BDD:
+	- in/out ports correct? physical input and control output?
+	- user-defined events as input?
+
 MagicDraw:
 	- same use-case in different models
 
 Professor:
-	- Monitoring real-time feedback as a use-case bubble?
+	- Monitoring real-time feedback/anti-cheating as use-case bubbles?
+
+How to fit MAPE into use-cases?
 
 Event VS Rule?
 
 English:
 	- Add day-time interval constraint (?)
 	- Turn shutter On/Off?
+	- Application modules? lighting, temp, social, attendance?
 
 Admin use-case:
 	- specialise * module management into different role and implement that into Admin and Others if needed?
