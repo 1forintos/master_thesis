@@ -1,0 +1,7 @@
+- manage nem jó, system sem
+- package module-ok helyett
+- túlságosan technikai részletek a "levelek" szintjén
+- dynamic service management as a separate package
+- interface nem kell BDD
+- BDD ben implementációs részletekre nincs még szükség csak a konkrét funkciókra
+- block definition block okat, use-case
