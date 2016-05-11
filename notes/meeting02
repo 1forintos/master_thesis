@@ -1,15 +1,15 @@
-Admin use-case:
+- Admin use-case:
 	- administer
 	- ige legyen 
-Start/stop nem kell
-hogy is működik picit részletesebben ("	fejben")
-Egy ember lehet több actor szerepben , nem kell őket vegyíteni use-case ben
-BDD:
+- Start/stop nem kell
+- hogy is működik picit részletesebben ("	fejben")
+
+- Egy ember lehet több actor szerepben , nem kell őket vegyíteni use-case ben
+- BDD:
 	- különböző diagram platformnak, funkcionalitásnak
 	- service ek nem eléggé domain specifikus, elolvasva tudni kell hogy mit csinálnak a blokkok 
 	- lighting, temp stb-k helyett részletesebb blokkok 
 	- adattípusok külön BDD ben (esetlegse paraméterek), logikai vezérlő jel, folytonos
 	- lehet recommendation is (module)
 	- logical connector to physical structure (bdd)
-	
-	-
+
