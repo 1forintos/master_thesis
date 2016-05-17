@@ -1,0 +1,9 @@
+controller device os kicsit -> control service esebb
+system nem kell
+generator nem kell, feedback service
+data storage service
+signal és data jellegűeket külön pacakge be
+vezérlőjel családokat jobban bontani
+tracability lépésről lépésre
+platform bdd stereotypez
+use-case ek actorokhoz
