@@ -7,3 +7,4 @@ vezérlőjel családokat jobban bontani
 tracability lépésről lépésre
 platform bdd stereotypez
 use-case ek actorokhoz
+map logical/function -> physical platfrorm
