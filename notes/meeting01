@@ -5,3 +5,4 @@
 - interface nem kell BDD
 - BDD ben implementációs részletekre nincs még szükség csak a konkrét funkciókra
 - block definition block okat, use-case
+- package eknek külön diagram

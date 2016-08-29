@@ -4,6 +4,6 @@
 - domain elemei, fogalmak, action ök
 - overview use-case a végén
 - actor, szereplő nem device
-- amit nem a rendszer csinál, soha nem fog csinálni azt azért nem biztos h bele kell tenni use case be
+- amit nem a rendszer csinál/soha nem fog csinálni azt azért nem biztos h bele kell tenni use case be
 - actorok, use-case ek ömlesztve először
 - plusz funkcionalitások, brainstorming
