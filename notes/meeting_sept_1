@@ -1,0 +1,17 @@
+clickers
+turningpoint cloud
+
+requirements:
+	shall/should/may (prioritás is)
+	nincs passzív
+	requirements nem teljesülése esetén mi a helyzet
+	self-healing ketté, guranteed message delivery
+	in case of failure, failure detection
+	jelenléti szavazás alapján
+	jelenléti esetleg derived
+	service/functional nézet - pl temperature reader, light ..., 
+	futtató platform model (milyen device)
+	allocation
+	use-case elrendezés, bal oldalt fő actor, (90fokos döntés)
+	use case nem kell a hierarchia
+	use-case ek nem fa hanem mátrix - ki és mit, ez a 2 dimenzió
