@@ -1,5 +1,7 @@
-- provide interface ??
-- should requirements (for instance Survey/Course Administration) be more specific?
+
 - Questionnaire -> form?
-- user use-cases enter to certain interface?
+- user use-cases enter to certain interface? (esetleg select)
 - data bridge for Users??
+- Users' Permission vs Persmission Of User*
+- use-case: Modify helyett a konkrét dolgok amiket modify olhat?
+  pl Modify Existing Course helyett (edit)
