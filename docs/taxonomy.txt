@@ -1,0 +1,3 @@
+Physical Conditions:
+  - physical conditions of a room in which a lecture takes place
+  - example: temperature, light/brightness, oxygen percentage
