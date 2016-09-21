@@ -1,3 +1,21 @@
+Context:
+  - University
+  - Lecturers hold Lectures
+  - Students attend Lectures
+
+Survey:
+  - a Survey is conducted during Lectures
+  - they can be started manually/automatically(scheduled)
+  - Students answer Surveys via online interfaces which become available when a Survey is started
+  - the Questions and Answer Options are based on Questionnaires
+
+Questionnaire:
+  - the Form of one or more Surveys
+  - consists of Questions and Answer Options for Questions
+
+User:
+  - an online user
+
 Physical Conditions:
-  - physical conditions of a room in which a lecture takes place
+  - physical conditions of a room in which a Lecture takes place
   - example: temperature, light/brightness, oxygen percentage
