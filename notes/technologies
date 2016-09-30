@@ -1,7 +1,9 @@
+Cloud <- Bluemix
 Database: Cloud / PostgreSQL
 Administration: Cloud / HTML+CSS+JS+PHP
 Monitoring: Cloud / HTML+CSS+JS+PHP
 Surveying Service: Cloud / HTML+CSS+JS+PHP
+Environment Control Settings Interface: Cloud / HTML+CSS+JS+PHP
 Environment Control: Raspberry PI / python3+
 Sensor Data Processing: Raspberry PI / python3+
 Communication: MQTT

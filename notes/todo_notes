@@ -1,2 +1,9 @@
-- merge Survey Administrator into Course admin
-- users can manage surveys/questionnaires of courses that are connected to them by use administrator
+- irodalomkutatás
+- ha van cloud az is(, ezt kiválasztani)
+- monitoring use case
+- if a Lecturer is connected to a course...
+- rewrite lower level requirement texts according to convention
+
+- IBD
+- Monitoring - vmi mást szó
+- Course Evaluation Systemre valami jobbat
