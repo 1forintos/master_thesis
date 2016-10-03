@@ -1,9 +1,10 @@
-Cloud <- Bluemix
-Database: Cloud / PostgreSQL
-Administration: Cloud / HTML+CSS+JS+PHP
-Monitoring: Cloud / HTML+CSS+JS+PHP
-Surveying Service: Cloud / HTML+CSS+JS+PHP
-Environment Control Settings Interface: Cloud / HTML+CSS+JS+PHP
-Environment Control: Raspberry PI / python3+
-Sensor Data Processing: Raspberry PI / python3+
+Hosting: Cloud <- Bluemix
+Database: PostgreSQL
+Administration: (bootstrap)HTML+CSS+JS  +PHP
+Monitoring: (bootstrap)HTML+CSS+JS+PHP
+Surveying Service: (bootstrap)HTML+CSS+JS+PHP
+Environment Controller:
+  - Environment Control Settings Interface: (bootstrap)HTML+CSS+JS+PHP
+  - Light/Temperature Controller: Raspberry PI / python3+
+  - Sensor Reader: Raspberry PI / python3+
 Communication: MQTT
