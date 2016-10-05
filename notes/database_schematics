@@ -54,10 +54,22 @@ Measurements:
 
 ------------------
 
-Questionnaires:
+Questionnaires (multiple ):
   - id
+  - questionnaire_id
   - title
   - timestamp
+  - question_id
 
-Questions:
-  - 
+Questions (for questions and answer options):
+  - id
+  - text
+  - type (single select, text answer)
+  - timestamp
+  - note
+
+Single select answer options:
+  - id
+  - question_id
+  - text
+  - position (question_id + position unique!, 1-5 pl)
