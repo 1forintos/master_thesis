@@ -1,0 +1,63 @@
+----------------------
+Students:
+  - id
+  - name
+  (- student_id?)
+  - timestamp
+  - notes
+
+Users:
+  - id
+  - account_name
+  - full_name
+  - role(?)
+  - timestamp
+  - notes
+
+Lecturers
+  - id
+  - user_id
+  - course_id
+  - timestamp
+  - notes
+
+Courses:
+  - id
+  - title
+  - timestamp
+  - notes
+
+Enrollment(s):
+  - id
+  - student_id
+  - course_id
+  - timestamp
+
+Lectures:
+  - id
+  - course_id
+  - date
+  - room_id
+  - timestamp
+  - notes
+
+Rooms:
+  - id
+  - name
+  - timestamp
+
+Measurements:
+  - type
+  - timestamp
+  - room_id
+  - lecture
+
+------------------
+
+Questionnaires:
+  - id
+  - title
+  - timestamp
+
+Questions:
+  - 
