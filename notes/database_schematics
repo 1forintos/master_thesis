@@ -1,52 +1,51 @@
 ----------------------
-Students:
+Student:
   - id
   - name
-  (- student_id?)
   - timestamp
   - notes
 
-Users:
+User:
   - id
-  - account_name
+  - email
   - full_name
   - role(?)
   - timestamp
   - notes
 
-Lecturers
+Lecturer:
   - id
   - user_id
   - course_id
   - timestamp
   - notes
 
-Courses:
+Course:
   - id
   - title
   - timestamp
   - notes
 
-Enrollment(s):
+Enrollment:
   - id
   - student_id
   - course_id
   - timestamp
 
-Lectures:
+Lecture:
   - id
   - course_id
-  - date
+  - lecture_date
   - room_id
   - timestamp
   - notes
 
-Rooms:
+Room:
   - id
   - name
   - timestamp
 
-Measurements:
+Measurement:
   - type
   - timestamp
   - room_id
@@ -54,22 +53,34 @@ Measurements:
 
 ------------------
 
-Questionnaires (multiple ):
+Form:
   - id
-  - questionnaire_id
   - title
   - timestamp
-  - question_id
 
-Questions (for questions and answer options):
+Question (for questions and answer options):
   - id
   - text
   - type (single select, text answer)
   - timestamp
   - note
 
-Single select answer options:
+Question_Of_Form:
+  - id
+  - form_id
+  - question_id
+  - timestamp
+
+Answer option:
   - id
   - question_id
   - text
   - position (question_id + position unique!, 1-5 pl)
+
+Environment Control Setting:
+  - id
+  - threshol1d
+  - physical condition (temperature, brightness)
+  - control_type (shutter, artificial lighting, heating, air conditioning)
+  - timestamp
+  - notes
