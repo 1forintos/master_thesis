@@ -2,29 +2,28 @@
 Student:
   - id
   - name
-  - timestamp
   - notes
+  - timestamp
 
 User:
   - id
   - email
   - full_name
-  - role(?)
-  - timestamp
   - notes
+  - timestamp
 
 Lecturer:
   - id
   - user_id
   - course_id
-  - timestamp
   - notes
+  - timestamp
 
 Course:
   - id
   - title
-  - timestamp
   - notes
+  - timestamp
 
 Enrollment:
   - id
@@ -37,8 +36,8 @@ Lecture:
   - course_id
   - lecture_date
   - room_id
-  - timestamp
   - notes
+  - timestamp
 
 Room:
   - id
@@ -47,9 +46,9 @@ Room:
 
 Measurement:
   - type
-  - timestamp
   - room_id
   - lecture
+  - timestamp
 
 ------------------
 
@@ -61,9 +60,9 @@ Form:
 Question (for questions and answer options):
   - id
   - text
-  - type (single select, text answer)
-  - timestamp
+  - type (single_select, textual)
   - note
+  - timestamp
 
 Question_Of_Form:
   - id
@@ -79,8 +78,8 @@ Answer option:
 
 Environment Control Setting:
   - id
-  - threshol1d
-  - physical condition (temperature, brightness)
-  - control_type (shutter, artificial lighting, heating, air conditioning)
-  - timestamp
+  - type
+  - threshold
+  - control_method (shutter, artificial lighting, heating, air conditioning)
   - notes
+  - timestamp
