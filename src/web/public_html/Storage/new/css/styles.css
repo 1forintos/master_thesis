@@ -1,0 +1,18 @@
+/* style rules added here will be loaded */
+
+.section-label {
+	margin-bottom: 0.5em;
+	font-size: 1.5em;
+}
+
+.input-group {
+	margin-bottom: 1.2em;
+}
+
+#content {
+	margin-top: 2em;
+}
+
+.danger {
+	border-color: red;
+}

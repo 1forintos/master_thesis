@@ -1,0 +1,23 @@
+/* style rules added here will be loaded */
+
+hr {
+	width: 96%;
+	margin-top: 4em;
+}
+
+.section-label {
+	margin-bottom: 0.5em;
+	font-size: 1.5em;
+}
+
+.input-container-item_type {
+	margin-bottom: 1em;
+}
+
+#content {
+	margin-top: 2em;
+}
+
+.danger {
+	border-color: red;
+}

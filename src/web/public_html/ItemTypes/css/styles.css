@@ -1,0 +1,13 @@
+/* style rules added here will be loaded */
+
+#container-input-notes {
+	margin-top: 1em;
+}
+
+#content {
+	margin-top: 2em;
+}
+
+.danger {
+	border-color: red;
+}

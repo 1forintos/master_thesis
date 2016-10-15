@@ -1,0 +1,34 @@
+/* style rules added here will be loaded */
+
+table {
+	max-width: none;
+}
+
+#popup-name-container,
+#container-input-item_type,
+#container-input-storage {
+	margin-bottom: 1em;
+}
+
+#container-input-notes {
+	margin-top: 1em;
+}
+
+#content {
+	margin-top: 2em;
+}
+
+.danger {
+	border-color: red;
+}
+
+#button-add-container {
+	text-align: right; 
+	margin-top: 1em;
+}
+
+hr {
+	width: 96%;
+	margin-top: 4em;
+}
+
