@@ -13,6 +13,8 @@
 			loadTableData($_POST['data']);
 		} else if($_POST['method'] == "createUserAccount") {
 			createUserAccount($_POST['data']);
+		} else if($_POST['method'] == "modifyUserAccount") {
+			modifyUserAccount($_POST['data']);
 		} else if($_POST['method'] == "deleteUserAccount") {
 			deleteUserAccount($_POST['data']);
 		}
@@ -59,6 +61,29 @@
 		if(!$result) {
 			pg_free_result($result);
 			throwError("Failed to insert storage.");
+		}
+
+		echo "success";
+	}
+
+	function modifyUserAccount($accountData) {
+		if(!filter_var($accountData['email'], FILTER_VALIDATE_EMAIL)) {
+			throwError("Invalid E-mail format... I saw what you did there.. you fishy little you -.-");
+		}
+		if(!userAccountExists($accountData['email'])) {
+			throwError("Account with E-mail [" . $accountData['email'] . "] does not exists.");
+		}
+
+		$result = pg_execute($GLOBALS['db'], "modify_user", array(
+			$accountData['full_name'],
+			$accountData['user_type'],
+			$accountData['notes'],
+			$accountData['email']
+		));
+
+		if(!$result) {
+			pg_free_result($result);
+			throwError("Failed to update user account.");
 		}
 
 		echo "success";
@@ -124,10 +149,21 @@
 
 
 		$sql = "
-			INSERT INTO Webuser (email, password, full_name, user_type, notes)
-			VALUES ($1, '', $2, $3, $4);
+			INSERT INTO Webuser (email, password, full_name, user_type, notes, timestamp)
+			VALUES ($1, '', $2, $3, $4, now());
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "create_user", $sql);
+
+		$sql = "
+			UPDATE Webuser
+			SET
+				full_name = $1,
+				user_type = $2,
+				notes = $3,
+				timestamp = now()
+			WHERE email = $4
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "modify_user", $sql);
 
 		foreach($results as $result) {
 			if(!$result) {

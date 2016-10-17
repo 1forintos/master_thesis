@@ -15,10 +15,11 @@ $(document).ready(function() {
 
 	$('#table-user_accounts tbody').on( 'click', '.button-edit', function () {
 		var data = table.row( $(this).parents('tr') ).data();
-		$('#input-edit-email').val(data[1]);
-		$('#input-edit-full_name').val(data[2]);
-		$('#input-edit-notes').val(data[3]);
-		$('#select-edit-user_type').val(data[4]).change();
+		$('#input-email').val(data[1]);
+		$('#input-full_name').val(data[2]);
+		$('#input-notes').val(data[3]);
+		console.log(data[4]);
+		$('#select-user_type').val(data[4]).change();
 		selectedTemplateId = data[0];
 	});
 
@@ -29,13 +30,17 @@ $(document).ready(function() {
 
 	fillTable(table, 'user_accounts');
 
+	$('#popup-button-save-modifications').click(function() {
+		alert("SUBMIT CHANGES");
+		// submitChanges();
+	});
+
 	$('#popup-button-save-new').on( 'click', function () {
 		createNewAccount();
 	});
 
-	$('#popup-button-save-modifications').click(function() {
-		modifyUserAccount();
-	});
+	//loadStoragesIntoSelect();
+	//loadItemTypesIntoSelect();
 
 });
 
@@ -138,62 +143,6 @@ function createNewAccount() {
 				var resultObj = $.parseJSON(result);
 				if('error' in resultObj) {
 					alert("Failed to create account: " + resultObj.error);
-				} else {
-					console.log("What the heck happened??");
-				}
-			}
-		}
-	});
-}
-
-function modifyUserAccount() {
-	var email = $('#input-edit-email').val().trim();
-	var fullName = $('#input-edit-full_name').val().trim();
-	var notes = $('#input-edit-notes').val().trim();
-	var userType = $('#select-edit-user_type').val();
-
-	var invalidInput = false;
-	if(email == "") {
-		$('#input-edit-email').addClass("danger");
-		invalidInput = true;
-	} else {
-		$('#input-edit-email').removeClass("danger");
-	}
-
-	if(fullName == "") {
-		$('#input-edit-full_name').addClass("danger");
-		invalidInput = true;
-	} else {
-		$('#input-edit-full_name').removeClass("danger");
-	}
-
-	if(invalidInput) {
-		alert("\"E-mail\" and \"Full Name\" cannot be empty.");
-		return;
-	}
-
-	var accountData = {};
-	accountData.email = email;
-	accountData.full_name = fullName;
-	accountData.notes = notes;
-	accountData.user_type = userType;
-
-	$.ajax({
-		type: "POST",
-		url: "/crm/db/db_methods.php",
-		data: {
-			method: "modifyUserAccount",
-			data: accountData
-		},
-		success: function(result) {
-			console.log(result);
-			if(result.indexOf("success") > -1) {
-				alert("Success!");
-				location.reload();
-			} else {
-				var resultObj = $.parseJSON(result);
-				if('error' in resultObj) {
-					alert("Failed to modify account: " + resultObj.error);
 				} else {
 					console.log("What the heck happened??");
 				}

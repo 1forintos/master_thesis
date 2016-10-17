@@ -26,16 +26,16 @@
 		     	<div class="col-sm-12 table-responsive">
 			    	<table id="table-user_accounts" class="table table-striped table-bordered" cellspacing="0" width="100%">
 			    		 <thead>
-			            <tr>
-			            	<th width="5%">#</th>
-		                <th width="15%">E-mail</th>
-		                <th width="20%">Full Name</th>
-		                <th width="23%">Notes</th>
-		                <th>User Type</th>
-		                <th width="5%">Timestamp</th>
-		                <th width="5%">Edit</th>
-		                <th width="5%">Delete</th>
-			            </tr>
+				            <tr>
+				            	<th width="5%">#</th>
+			                <th width="15%">E-mail</th>
+			                <th width="20%">Full Name</th>
+			                <th width="23%">Notes</th>
+			                <th>User Type</th>
+			                <th width="5%">Timestamp</th>
+			                <th width="5%">Edit</th>
+			                <th width="5%">Delete</th>
+				            </tr>
 				       	 </thead>
 				        <tbody/>
 			    	</table>
@@ -65,7 +65,7 @@
 			    	<div class="col-sm-12">
 				     	<div class="input-group">
 							  <span class="input-group-addon">E-mail:</span>
-								<input disabled type="text" id="input-edit-email" class="form-control" aria-describedby="basic-addon3">
+								<input type="text" id="input-email" class="form-control" aria-describedby="basic-addon3">
 							</div>
 						</div>
 					</div>
@@ -73,7 +73,7 @@
 						<div class="col-sm-12">
 							<div class="input-group">
 								<span class="input-group-addon">Full Name:</span>
-								<input type="text" id="input-edit-full_name" class="form-control" aria-describedby="basic-addon3">
+								<input type="text" id="input-full_name" class="form-control" aria-describedby="basic-addon3">
 							</div>
 						</div>
 					</div>
@@ -81,7 +81,7 @@
 			    	<div class="col-sm-12">
 				     	<div class="input-group">
 							  <span class="input-group-addon">Notes:</span>
-								<input type="text" id="input-edit-notes" class="form-control" aria-describedby="basic-addon3">
+								<input type="text" id="input-notes" class="form-control" aria-describedby="basic-addon3">
 							</div>
 						</div>
 					</div>
@@ -89,7 +89,7 @@
 			    	<div class="col-sm-12">
 				     	<div class="input-group">
 							  <span class="input-group-addon">User Type:</span>
-								<select id="select-edit-user_type" name="select-user_type" aria-describedby="basic-addon3" class="form-control selectpicker selectpicker-default select-user_type" data-size="5">
+								<select id="select-user_type" name="select-user_type" aria-describedby="basic-addon3" class="form-control selectpicker selectpicker-default select-user_type" data-size="5">
 									<option value="dev">Developer</option>
 									<option value="user_admin">User Administrator</option>
 									<option value="course_admin">Course Administrator</option>
