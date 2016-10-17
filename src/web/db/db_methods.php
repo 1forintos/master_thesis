@@ -17,6 +17,12 @@
 			modifyUserAccount($_POST['data']);
 		} else if($_POST['method'] == "deleteUserAccount") {
 			deleteUserAccount($_POST['data']);
+		} else if($_POST['method'] == "createCourse") {
+			createCourse($_POST['data']);
+		} else if($_POST['method'] == "modifyCourse") {
+			modifyCourse($_POST['data']);
+		} else if($_POST['method'] == "deleteCourse") {
+			deleteCourse($_POST['data']);
 		}
 	}
 
@@ -24,6 +30,10 @@
 		$sql = null;
 		if($tableInfo == "user_accounts") {
 			$results = pg_execute($GLOBALS['db'], "get_users", array());
+		} else {
+			if($tableInfo == "courses") {
+				$results = pg_execute($GLOBALS['db'], "get_courses", array());
+			}
 		}
 
 		$tableData = array();
@@ -43,12 +53,17 @@
 		echo json_encode($result);
 	}
 
+	# USER ACCOUNT
+
 	function createUserAccount($accountData) {
 		if(!filter_var($accountData['email'], FILTER_VALIDATE_EMAIL)) {
 			throwError("Invalid E-mail format.");
 		}
-		if(userAccountExists($accountData['email'])) {
-			throwError("Email [" . $accountData['email'] . "] already exists.");
+		if(emailAlreadyUsed($accountData['email'])) {
+			throwError("Email [" . $accountData['email'] . "] already used.");
+		}
+		if($accountData['full_name'] == "") {
+			throwError("Full name cannot be empty.");
 		}
 
 		$result = pg_execute($GLOBALS['db'], "create_user", array(
@@ -60,25 +75,22 @@
 
 		if(!$result) {
 			pg_free_result($result);
-			throwError("Failed to insert storage.");
+			throwError("Failed to insert account.");
 		}
 
 		echo "success";
 	}
 
 	function modifyUserAccount($accountData) {
-		if(!filter_var($accountData['email'], FILTER_VALIDATE_EMAIL)) {
-			throwError("Invalid E-mail format... I saw what you did there.. you fishy little you -.-");
-		}
-		if(!userAccountExists($accountData['email'])) {
-			throwError("Account with E-mail [" . $accountData['email'] . "] does not exists.");
+		if(!userAccountExists($accountData['id'])) {
+			throwError("Account not found. ID [" . $accountData['id'] . "]");
 		}
 
 		$result = pg_execute($GLOBALS['db'], "modify_user", array(
 			$accountData['full_name'],
 			$accountData['user_type'],
 			$accountData['notes'],
-			$accountData['email']
+			$accountData['id']
 		));
 
 		if(!$result) {
@@ -90,28 +102,118 @@
 	}
 
 	function deleteUserAccount($accountData) {
-		if(!userAccountExists($accountData['email'])) {
-			throwError("User with E-mail [" . $accountData['email'] . "] does not exists.");
+		if(!userAccountExists($accountData['id'])) {
+			throwError("Account not found. ID [" . $accountData['id'] . "]");
 		}
 
 		$result = pg_execute($GLOBALS['db'], "delete_user", array(
-			$accountData['email']
+			$accountData['id']
 		));
 
 		if(!$result) {
 			pg_free_result($result);
-			throwError("Failed to DELETE or NOT storage.");
+			throwError("Failed to DELETE account.");
 		}
 
 		echo "success";
 	}
 
-	function userAccountExists($email) {
-		$result = pg_execute($GLOBALS['db'], "user_exists", array($email));
+	function userAccountExists($id) {
+		$result = pg_execute($GLOBALS['db'], "user_exists", array($id));
 		$result = pg_fetch_array($result);
-		error_log(print_r($result, true));
 
 		if($result['user_exists']) {
+			return true;
+		}
+		return false;
+	}
+
+	function emailAlreadyUsed($email) {
+		$result = pg_execute($GLOBALS['db'], "email_used", array($email));
+		$result = pg_fetch_array($result);
+
+		if($result['email_used']) {
+			return true;
+		}
+		return false;
+	}
+
+	# COURSES
+
+	function createCourse($courseData) {
+		if($courseData['course_code'] == '' || $courseData['title'] == '') {
+			throwError("Course Code and Title cannot be empty.");
+		}
+		if(courseCodeAlreadyUsed($courseData['course_code'])) {
+			throwError("Course Code [" . $courseData['course_code'] . "] already used.");
+		}
+
+		$result = pg_execute($GLOBALS['db'], "create_course", array(
+			$courseData['course_code'],
+			$courseData['title'],
+			$courseData['notes']
+		));
+
+		if(!$result) {
+			pg_free_result($result);
+			throwError("Failed to insert course.");
+		}
+
+		echo "success";
+	}
+
+	function modifyCourse($courseData) {
+		if(!courseExists($courseData['id'])) {
+			throwError("Account not found. ID [" . $courseData['id'] . "]");
+		}
+
+		$result = pg_execute($GLOBALS['db'], "modify_course", array(
+			$courseData['course_code'],
+			$courseData['title'],
+			$courseData['notes'],
+			$courseData['id']
+		));
+
+		if(!$result) {
+			pg_free_result($result);
+			throwError("Failed to update course.");
+		}
+
+		echo "success";
+	}
+
+	function deleteCourse($course) {
+		if(!courseExists($course['id'])) {
+			throwError("Course not found. ID [" . $course['id'] . "]");
+		}
+
+		$result = pg_execute($GLOBALS['db'], "delete_course", array(
+			$course['id']
+		));
+
+		if(!$result) {
+			pg_free_result($result);
+			throwError("Failed to delete course.");
+		}
+
+		echo "success";
+	}
+
+	function courseExists($id) {
+		$result = pg_execute($GLOBALS['db'], "course_exists", array($id));
+		$result = pg_fetch_array($result);
+
+		if($result['course_exists']) {
+			return true;
+		}
+		return false;
+	}
+
+	function courseCodeAlreadyUsed($email) {
+		$result = pg_execute($GLOBALS['db'], "course_code_used", array($email));
+		$result = pg_fetch_array($result);
+
+		if($result['course_code_used']) {
 			return true;
 		}
 		return false;
@@ -128,6 +230,7 @@
 	function prepareStatements() {
 		$results = Array();
 
+		# USER ACCOUNTS
 		$sql = "
 			SELECT id, email, full_name, notes, user_type, timestamp::date
 			FROM Webuser
@@ -137,16 +240,22 @@
 		$sql = "
 			SELECT COUNT(*) AS user_exists
 			FROM Webuser
-			WHERE email = $1
+			WHERE id = $1
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "user_exists", $sql);
 
 		$sql = "
-			DELETE FROM Webuser
+			SELECT COUNT(*) AS email_used
+			FROM Webuser
 			WHERE email = $1
 		";
-		$results[] = pg_prepare($GLOBALS['db'], "delete_user", $sql);
+		$results[] = pg_prepare($GLOBALS['db'], "email_used", $sql);
 
+		$sql = "
+			DELETE FROM Webuser
+			WHERE id = $1
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "delete_user", $sql);
 
 		$sql = "
 			INSERT INTO Webuser (email, password, full_name, user_type, notes, timestamp)
@@ -161,9 +270,55 @@
 				user_type = $2,
 				notes = $3,
 				timestamp = now()
-			WHERE email = $4
+			WHERE id = $4
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "modify_user", $sql);
+
+		# COURSES
+
+		$sql = "
+			SELECT id, course_code, title, notes, timestamp::date
+			FROM Course
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "get_courses", $sql);
+
+		$sql = "
+			SELECT COUNT(*) AS course_exists
+			FROM Course
+			WHERE id = $1
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "course_exists", $sql);
+
+		$sql = "
+			SELECT COUNT(*) AS course_code_used
+			FROM Course
+			WHERE course_code = $1
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "course_code_used", $sql);
+
+		$sql = "
+			DELETE FROM Course
+			WHERE id = $1
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "delete_course", $sql);
+
+		$sql = "
+			INSERT INTO Course (course_code, title, notes, timestamp)
+			VALUES ($1, $2, $3, now());
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "create_course", $sql);
+
+		$sql = "
+			UPDATE Course
+			SET
+				course_code = $1,
+				title = $2,
+				notes = $3,
+				timestamp = now()
+			WHERE id = $4
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "modify_course", $sql);
+
 
 		foreach($results as $result) {
 			if(!$result) {

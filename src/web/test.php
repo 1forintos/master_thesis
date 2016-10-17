@@ -1,9 +1,9 @@
 <?php
-$email = "asdasSd@yolo\.*hu";
-if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
-  echo "YO";
-} else {
+$text = "";
+if($text == "") {
   echo "NOYO";
+} else {
+  echo "YO";
 }
 
 ?>

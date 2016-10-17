@@ -64,7 +64,7 @@
 			    	<div class="col-sm-12">
 				     	<div class="input-group">
 							  <span class="input-group-addon">Course Code:</span>
-								<input type="text" id="input-course_code" class="form-control" aria-describedby="basic-addon3">
+								<input type="text" id="input-edit-course_code" class="form-control" aria-describedby="basic-addon3">
 							</div>
 						</div>
 					</div>
@@ -72,7 +72,7 @@
 						<div class="col-sm-12">
 							<div class="input-group">
 								<span class="input-group-addon">Title:</span>
-								<input type="text" id="input-title" class="form-control" aria-describedby="basic-addon3">
+								<input type="text" id="input-edit-title" class="form-control" aria-describedby="basic-addon3">
 							</div>
 						</div>
 					</div>
@@ -80,7 +80,7 @@
 			    	<div class="col-sm-12">
 				     	<div class="input-group">
 							  <span class="input-group-addon">Notes:</span>
-								<input type="text" id="input-notes" class="form-control" aria-describedby="basic-addon3">
+								<input type="text" id="input-edit-notes" class="form-control" aria-describedby="basic-addon3">
 							</div>
 						</div>
 					</div>

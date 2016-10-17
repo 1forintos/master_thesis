@@ -137,6 +137,9 @@ CREATE TABLE Environment_Control_Setting (
   timestamp TIMESTAMP DEFAULT now()
 );
 
+
+/* add sample users */
+
 INSERT INTO Webuser (email, password, full_name, user_type, notes)
 VALUES ('dev@example.com', 'dev', 'Mr Developer', 'dev', 'notes 1');
 
@@ -151,5 +154,19 @@ VALUES ('course_admin1@example.com', 'pass', 'Mr Course Admin 1', 'course_admin'
 
 INSERT INTO Webuser (email, password, full_name, user_type, notes)
 VALUES ('course_admin2@example.com', 'pass', 'Mr Course Admin 2', 'course_admin', 'notes 5');
+
+/* add sample courses */
+
+INSERT INTO Course (course_code, title, notes)
+VALUES ('C1', 'Course Title 1', 'decent course');
+
+INSERT INTO Course (course_code, title, notes)
+VALUES ('C2', 'Course Title 2', 'notes 2');
+
+INSERT INTO Course (course_code, title, notes)
+VALUES ('C3', 'Course Title 3', '');
+
+INSERT INTO Course (course_code, title, notes)
+VALUES ('C4', 'Course Title 4', 'course notes 4');
 
 COMMIT;

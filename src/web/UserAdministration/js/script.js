@@ -11,7 +11,7 @@ $(document).ready(function() {
 			}
 	]});
 
-	selectedUserAccountId = null;
+	userAccountId = null;
 
 	$('#table-user_accounts tbody').on( 'click', '.button-edit', function () {
 		var data = table.row( $(this).parents('tr') ).data();
@@ -19,12 +19,12 @@ $(document).ready(function() {
 		$('#input-edit-full_name').val(data[2]);
 		$('#input-edit-notes').val(data[3]);
 		$('#select-edit-user_type').val(data[4]).change();
-		selectedTemplateId = data[0];
+		selectedUserAccountId = data[0];
 	});
 
 	$('#table-user_accounts tbody').on( 'click', '.button-remove', function () {
 		var data = table.row($(this).parents('tr')).data();
-		deleteUserAccount(data[1]);
+		deleteUserAccount(data[0]);
 	});
 
 	fillTable(table, 'user_accounts');
@@ -173,7 +173,7 @@ function modifyUserAccount() {
 	}
 
 	var accountData = {};
-	accountData.email = email;
+	accountData.id = selectedUserAccountId;
 	accountData.full_name = fullName;
 	accountData.notes = notes;
 	accountData.user_type = userType;
@@ -202,9 +202,9 @@ function modifyUserAccount() {
 	});
 }
 
-function deleteUserAccount(email) {
+function deleteUserAccount(id) {
 	var accountData = {};
-	accountData.email = email;
+	accountData.id = id;
 
 	$.ajax({
 		type: "POST",

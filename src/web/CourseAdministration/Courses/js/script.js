@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	var table = $('#table-user_accounts').DataTable({
+	var table = $('#table-courses').DataTable({
 			"columnDefs": [ {
 					"targets": -2,
 					"data": null,
@@ -13,35 +13,28 @@ $(document).ready(function() {
 
 	selectedUserAccountId = null;
 
-	$('#table-user_accounts tbody').on( 'click', '.button-edit', function () {
+	$('#table-courses tbody').on( 'click', '.button-edit', function () {
 		var data = table.row( $(this).parents('tr') ).data();
-		$('#input-email').val(data[1]);
-		$('#input-full_name').val(data[2]);
-		$('#input-notes').val(data[3]);
-		console.log(data[4]);
-		$('#select-user_type').val(data[4]).change();
-		selectedTemplateId = data[0];
+		$('#input-edit-course_code').val(data[1]);
+		$('#input-edit-title').val(data[2]);
+		$('#input-edit-notes').val(data[3]);
+		selectedCourseId = data[0];
 	});
 
-	$('#table-user_accounts tbody').on( 'click', '.button-remove', function () {
+	$('#table-courses tbody').on( 'click', '.button-remove', function () {
 		var data = table.row($(this).parents('tr')).data();
-		deleteUserAccount(data[1]);
+		deleteCourse(data[0]);
 	});
 
-	fillTable(table, 'user_accounts');
+	fillTable(table, 'courses');
 
 	$('#popup-button-save-modifications').click(function() {
-		alert("SUBMIT CHANGES");
-		// submitChanges();
+		modifyCourse();
 	});
 
 	$('#popup-button-save-new').on( 'click', function () {
-		createNewAccount();
+		createNewCourse();
 	});
-
-	//loadStoragesIntoSelect();
-	//loadItemTypesIntoSelect();
-
 });
 
 function fillTable(tableToFill, dataType) {
@@ -74,65 +67,96 @@ function addRowToTable(table, rowData) {
 	table.row.add(dataArray).draw().node();
 }
 
-function loadUserTypesForSelect() {
+function createNewCourse() {
+	var course_code = $('#input-new-course_code').val().trim();
+	var title = $('#input-new-title').val().trim();
+	var notes = $('#input-new-notes').val().trim();
+
+	var invalidInput = false;
+	if(course_code == "") {
+		$('#input-new-course_code').addClass("danger");
+		invalidInput = true;
+	} else {
+		$('#input-new-course_code').removeClass("danger");
+	}
+
+	if(title == "") {
+		$('#input-new-title').addClass("danger");
+		invalidInput = true;
+	} else {
+		$('#input-new-title').removeClass("danger");
+	}
+
+	if(invalidInput) {
+		alert("\"Course Code\" and \"Title\" cannot be empty.");
+		return;
+	}
+
+	var courseData = {};
+	courseData.course_code = course_code;
+	courseData.title = title;
+	courseData.notes = notes;
+
 	$.ajax({
 		type: "POST",
 		url: "/crm/db/db_methods.php",
 		data: {
-			method: "loadUserTypesForSelect"
+			method: "createCourse",
+			data: courseData
 		},
-		success: function(results) {
-			rows = jQuery.parseJSON(results);
-			var userTypesSelect = $('#select-user_types');
-			for(var i in rows) {
-				newOption = document.createElement("option");
-				newOption.innerHTML = rows[i].name;
-				newOption.setAttribute("value", rows[i].user_type);
-				storageSelect.append(newOption);
-				storageSelect.selectpicker('refresh');
-			};
+		success: function(result) {
+			if(result.indexOf("success") > -1) {
+				alert("Success!");
+				location.reload();
+			} else {
+				var resultObj = $.parseJSON(result);
+				if('error' in resultObj) {
+					alert("Failed to create course: " + resultObj.error);
+				} else {
+					console.log("What the heck happened??");
+				}
+			}
 		}
 	});
 }
 
-function createNewAccount() {
-	var email = $('#input-new-email').val().trim();
-	var fullName = $('#input-new-full_name').val().trim();
-	var notes = $('#input-new-notes').val().trim();
-	var userType = $('#select-user_type').val();
+function modifyCourse() {
+	var course_code = $('#input-edit-course_code').val().trim();
+	var title = $('#input-edit-title').val().trim();
+	var notes = $('#input-edit-notes').val().trim();
 
 	var invalidInput = false;
-	if(email == "") {
-		$('#input-new-email').addClass("danger");
+	if(course_code == "") {
+		$('#input-new-course_code').addClass("danger");
 		invalidInput = true;
 	} else {
-		$('#input-new-email').removeClass("danger");
+		$('#input-new-course_code').removeClass("danger");
 	}
 
-	if(fullName == "") {
-		$('#input-new-full_name').addClass("danger");
+	if(title == "") {
+		$('#input-new-title').addClass("danger");
 		invalidInput = true;
 	} else {
-		$('#input-new-full_name').removeClass("danger");
+		$('#input-new-title').removeClass("danger");
 	}
 
 	if(invalidInput) {
-		alert("\"E-mail\" and \"Full Name\" cannot be empty.");
+		alert("\"Course Code\" and \"Title\" cannot be empty.");
 		return;
 	}
 
-	var accountData = {};
-	accountData.email = email;
-	accountData.full_name = fullName;
-	accountData.notes = notes;
-	accountData.user_type = userType;
+	var courseData = {};
+	courseData.id = selectedCourseId;
+	courseData.course_code = course_code;
+	courseData.title = title;
+	courseData.notes = notes;
 
 	$.ajax({
 		type: "POST",
 		url: "/crm/db/db_methods.php",
 		data: {
-			method: "createUserAccount",
-			data: accountData
+			method: "modifyCourse",
+			data: courseData
 		},
 		success: function(result) {
 			console.log(result);
@@ -142,7 +166,7 @@ function createNewAccount() {
 			} else {
 				var resultObj = $.parseJSON(result);
 				if('error' in resultObj) {
-					alert("Failed to create account: " + resultObj.error);
+					alert("Failed to modify account: " + resultObj.error);
 				} else {
 					console.log("What the heck happened??");
 				}
@@ -151,16 +175,16 @@ function createNewAccount() {
 	});
 }
 
-function deleteUserAccount(email) {
-	var accountData = {};
-	accountData.email = email;
+function deleteCourse(id) {
+	var courseData = {};
+	courseData.id = id;
 
 	$.ajax({
 		type: "POST",
 		url: "/crm/db/db_methods.php",
 		data: {
-			method: "deleteUserAccount",
-			data: accountData
+			method: "deleteCourse",
+			data: courseData
 		},
 		success: function(result) {
 			if(result.indexOf("success") > -1) {
