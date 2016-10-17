@@ -6,6 +6,6 @@
 	authenticate();
 
 	function getRootFolder() {
-		return substr(__DIR__, 0, strpos(__DIR__, "/sm/") + 3);
+		return substr(__DIR__, 0, strpos(__DIR__, "/crm/") + 4);
 	}
 ?>

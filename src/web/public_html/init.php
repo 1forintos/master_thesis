@@ -1,5 +1,7 @@
 <?php
 
+	ini_set("log_errors", 1);
+
 	if(!isset($GLOBALS['root'])) {
 	 	$root = getRootURL();
 	}
@@ -23,6 +25,6 @@
 		$pageURL .= "://";
 
 		$pageURL .= $_SERVER["SERVER_NAME"];
-		return $pageURL . "/sm/";
+		return $pageURL . "/crm/";
 	}
 ?>

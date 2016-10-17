@@ -1,31 +1,36 @@
 <?php
-	chdir(substr(__DIR__, 0, strpos(__DIR__, "/sm/") + 3));
+	chdir(substr(__DIR__, 0, strpos(__DIR__, "/crm/") + 4));
 	require_once "db/db_init.php";
 	require_once "init.php";
 
 	session_start();
 
 	function login() {
-		$ps = $GLOBALS['pdo']->prepare("
-			SELECT
-				COUNT(*) AS user_found,
-				user_type,
-				user_id
-			FROM `Users`
-			WHERE login_name = ?
-				AND password = ?
-		");
 
-		$userName = $_POST["user"];
-		$password = $_POST["pass"];
-		$ps->execute(array($userName, $password));
-		$ps->setFetchMode(PDO::FETCH_OBJ);
-		$result = $ps->fetch();
-		if($result->user_found) {
+		$sql = "
+		  SELECT
+		    COUNT(*) AS user_found,
+		    user_type,
+		    id
+		  FROM Webuser
+		  WHERE email = $1
+		    AND password = $2
+		  GROUP BY id
+		";
+
+		$result = pg_prepare($GLOBALS['db'], "login_data", $sql);
+		if(!$result) {
+		  error_log("Failed to prepare statement");
+		}
+		$result = pg_execute($GLOBALS['db'], "login_data", array($_POST["email"], $_POST["pass"]));
+		$user = pg_fetch_array($result);
+		pg_free_result($result);
+
+		if($user['user_found']) {
 			$_SESSION['authenticated'] = true;
 			$_SESSION['timeout'] = time();
-			$_SESSION['user_type'] = $result->user_type;
-			$_SESSION['user_id'] = $result->user_id;
+			$_SESSION['user_type'] = $user['user_type'];
+			$_SESSION['user_id'] = $user['id'];
 			$url = $GLOBALS['root'] . "Home";
 			navigateBrowser($url);
 		} else {
@@ -40,6 +45,9 @@
 	}
 
 	function authenticate() {
+		if(!isset($_SESSION['authenticated'])) {
+			logout();
+		}
 		if(!($_SESSION['authenticated'] && checkTimeout())) {
 			logout();
 		}
@@ -49,7 +57,7 @@
 		# Check for session timeout, else initiliaze time
 		if (isset($_SESSION['timeout'])) {
 			# Check Session Time for expiry
-			$minutes = 10;
+			$minutes = 30;
 			$seconds = 0;
 			if ($_SESSION['timeout'] + $minutes * 60 + $seconds < time()) {
 				return false;

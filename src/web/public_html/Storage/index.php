@@ -1,10 +1,10 @@
-<?php 
-	include("server_script.php"); 
+<?php
+	include("server_script.php");
 
 	chdir(getRootFolder());
-	
-	include("header/header_script.php"); 
-	include("header/header_begin.php"); 
+
+	include("header/header_script.php");
+	include("header/header_begin.php");
 ?>
 
 <div id="content" class="container">
@@ -17,12 +17,12 @@
 	  </div>
 	</div>
 
-	<div class="panel panel-default">	
+	<div class="panel panel-default">
 	<div class="panel-heading">
 	    <h3 class="panel-title">Stored items</h3>
-	  </div>  
+	  </div>
 	  <div class="panel-body">
-		  	<div class="row">	  		
+		  	<div class="row">
 		     	<div class="col-sm-12 table-responsive">
 			    	<table id="table-stored_items" class="table table-striped table-bordered" cellspacing="0" width="100%">
 			    		 <thead>
@@ -36,8 +36,8 @@
 				                <th width="5%">Edit</th>
 				                <th width="8%">Delete</th>
 				            </tr>
-				       	 </thead>				       
-				        <tbody/>		    		
+				       	 </thead>
+				        <tbody/>
 			    	</table>
 			    </div>
 		  	</div>
@@ -48,7 +48,7 @@
 		      			class="btn btn-default glyphicon glyphicon-plus" id="button-add-item" ></button>
 		     	</div>
   			</div>
-		</div>		
+		</div>
   	</div>
 </div>
 
@@ -77,7 +77,7 @@
 					  <span class="input-group-addon" id="text-quantity_unit"></span>
 					</div>
 				</div>
-			</div>			
+			</div>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -123,7 +123,7 @@
 					  <span class="input-group-addon" id="text-quantity_unit"></span>
 					</div>
 				</div>
-			</div>			
+			</div>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -134,4 +134,4 @@
 	</div><!-- /.modal -->
 </div>
 
-<?php include("header/header_end.php"); ?>		
+<?php include("header/header_end.php"); ?>

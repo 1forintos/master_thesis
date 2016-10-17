@@ -12,16 +12,16 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
 
 	<link rel="stylesheet" href="css/styles.css">
-	<link rel="stylesheet" href="/sm/header/css/header.css">
+	<link rel="stylesheet" href="/crm/header/css/header.css">
 	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-	
+
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/css/bootstrap-select.min.css">
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">	
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.10/css/dataTables.bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.min.css">
-	
+
 
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/js/bootstrap-select.min.js"></script>
@@ -30,7 +30,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>
 
 	<!-- Latest compiled and minified Locales -->
-	<script src="/sm/header/js/header.js"></script>
+	<script src="/crm/header/js/header.js"></script>
 	<script src="js/script.js"></script>
   </head>
   <body>
@@ -46,14 +46,14 @@
 			        <span class="icon-bar"></span>
 			        <span class="icon-bar"></span>
 			      </button>
-			      <a class="navbar-brand" href="" onclick="navigateHome()"><img id="logo" class="img-responsive" alt="Home" src="/sm/pics/logo.png"></a>
+			      <a class="navbar-brand" href="" onclick="navigateHome()"><img id="logo" class="img-responsive" alt="Home" src="/crm/pics/logo.png"></a>
 			    </div>
 
 			    <!-- Collect the nav links, forms, and other content for toggling -->
 			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			      <ul class="nav navbar-nav">
 			        <!-- <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li> -->
-			        <?php 
+			        <?php
 			        	foreach(getModules() as $moduleName => $subModules):
 			        		if(count($subModules) > 1):
 			        ?>
@@ -64,16 +64,16 @@
 							          	 <li><a href=<?php echo "\"" . $subModule["path"] . "\"";?> ><?php echo $subModule["name"]; ?></a></li>
 							          <?php endforeach; ?>
 						          </ul>
-			    			<?php else: ?>
-			    				<li><a href=<?php $subModule = array_shift(array_values($subModules)); echo $subModule['path'];?>><?php echo $subModule['name']; ?></a></li>
+			    			<?php elseif(count($subModules) == 1): ?>
+			    				<li><a href=<?php $subModule = array_values($subModules)[0]; echo $subModule['path'];?>><?php echo $subModule['name']; ?></a></li>
 		    				<?php endif; ?>
-			    	<?php endforeach; ?>			        
+			    	<?php endforeach; ?>
 			      </ul>
 			      <ul class="nav navbar-nav navbar-right">
-			        <li><a href="" onclick="logout();">Logout</a></li>			        
-			      </ul>			      			     
+			        <li><a href="" onclick="logout();">Logout</a></li>
+			      </ul>
 			    </div><!-- /.navbar-collapse -->
 			  </div><!-- /.container-fluid -->
-			</nav>			
+			</nav>
 		</div>
 	</header>

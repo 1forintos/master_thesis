@@ -11,12 +11,12 @@ DROP TABLE IF EXISTS Lecture CASCADE;
 DROP TABLE IF EXISTS Course CASCADE;
 DROP TABLE IF EXISTS Student CASCADE;
 DROP TABLE IF EXISTS Lecturer CASCADE;
-DROP TABLE IF EXISTS Users CASCADE;
+DROP TABLE IF EXISTS Webuser CASCADE;
 
 DO $$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'task_status') THEN
-        CREATE TYPE task_status AS ENUM ('todo', 'doing', 'blocked', 'done');
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_type') THEN
+        CREATE TYPE user_type AS ENUM ('dev', 'user_admin', 'course_admin');
     END IF;
 END
 $$;
@@ -45,10 +45,12 @@ BEGIN
 END
 $$;
 
-CREATE TABLE Users (
+CREATE TABLE Webuser (
   id serial PRIMARY KEY,
   email varchar(100) UNIQUE NOT NULL,
+  password varchar(100) NOT NULL,
   full_name varchar(100) NOT NULL,
+  user_type user_type NOT NULL,
   notes varchar(100),
   timestamp TIMESTAMP DEFAULT now()
 );
@@ -63,7 +65,7 @@ CREATE TABLE Course (
 
 CREATE TABLE Lecturer (
   id serial PRIMARY KEY,
-  user_id integer REFERENCES Users (id) NOT NULL,
+  user_id integer REFERENCES Webuser (id) NOT NULL,
   course_id integer REFERENCES Course (id) NOT NULL,
   notes varchar(100),
   timestamp TIMESTAMP DEFAULT now()
@@ -134,5 +136,20 @@ CREATE TABLE Environment_Control_Setting (
   notes varchar(100) NOT NULL,
   timestamp TIMESTAMP DEFAULT now()
 );
+
+INSERT INTO Webuser (email, password, full_name, user_type, notes)
+VALUES ('dev@example.com', 'dev', 'Mr Developer', 'dev', 'notes 1');
+
+INSERT INTO Webuser (email, password, full_name, user_type, notes)
+VALUES ('user_admin1@example.com', 'pass', 'Mr User Admin 1', 'user_admin', 'notes 2');
+
+INSERT INTO Webuser (email, password, full_name, user_type, notes)
+VALUES ('user_admin2@example.com', 'pass', 'Mr User Admin 2', 'user_admin', 'notes3');
+
+INSERT INTO Webuser (email, password, full_name, user_type, notes)
+VALUES ('course_admin1@example.com', 'pass', 'Mr Course Admin 1', 'course_admin', 'notes 4');
+
+INSERT INTO Webuser (email, password, full_name, user_type, notes)
+VALUES ('course_admin2@example.com', 'pass', 'Mr Course Admin 2', 'course_admin', 'notes 5');
 
 COMMIT;

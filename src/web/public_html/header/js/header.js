@@ -1,11 +1,11 @@
 $(document).ready(function() {
-	
+
 });
 
 function navigateHome() {
 	$.ajax({
 		type: "POST",
-		url: "/sm/header/header_script.php",
+		url: "/crm/header/header_script.php",
 		data: {
 			value: "navigate",
 			where: "home"
@@ -19,7 +19,7 @@ function navigateHome() {
 function logout() {
    $.ajax({
 		type: "POST",
-		url: "/sm/header/header_script.php",
-		data: {value: "logout"}	
+		url: "/crm/header/header_script.php",
+		data: {value: "logout"}
 	});
 }
