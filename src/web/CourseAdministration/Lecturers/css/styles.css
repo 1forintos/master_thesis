@@ -1,0 +1,55 @@
+/* style rules added here will be loaded */
+
+select {
+
+}
+
+table {
+	max-width: none;
+}
+
+hr {
+	width: 96%;
+	margin-top: 4em;
+}
+
+.popup-row {
+	margin-bottom: 0.5em;
+}
+
+.danger {
+	border-color: red;	
+}
+
+#content {
+	margin-top: 2em;
+}
+
+#button-add-container {
+	text-align: right;
+	margin-top: 1em;
+}
+
+
+.select-bigger { 
+	height: 25em!important;
+}
+
+.select-smaller {
+	height: 3em!important;
+}
+
+.select-smaller
+.select-bigger {
+    padding: 9px; 
+    border: solid 1px #0077B0; 
+    outline: 0; 
+    box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px; 
+    -moz-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px; 
+    -webkit-box-shadow: rgba(0,0,0, 0.1) 0px 0px 8px; 
+
+}
+
+.label-smaller {
+	margin-top: 1em;
+} 

@@ -15,33 +15,37 @@ DROP TABLE IF EXISTS Webuser CASCADE;
 
 DO $$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_type') THEN
-        CREATE TYPE user_type AS ENUM ('dev', 'user_admin', 'course_admin');
-    END IF;
+  IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_type') THEN
+    DROP TYPE user_type;
+  END IF;
+  CREATE TYPE user_type AS ENUM ('dev', 'user_admin', 'course_admin', 'lecturer');
 END
 $$;
 
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'measurement_type') THEN
-    CREATE TYPE measurement_type AS ENUM ('temperature', 'light');
+  IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'measurement_type') THEN
+    DROP TYPE measurement_type;
   END IF;
+  CREATE TYPE measurement_type AS ENUM ('temperature', 'light');
 END
 $$;
 
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'question_type') THEN
-    CREATE TYPE question_type AS ENUM ('single_select', 'textual');
+  IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'question_type') THEN
+    DROP TYPE question_type;
   END IF;
+  CREATE TYPE question_type AS ENUM ('single_select', 'textual');
 END
 $$;
 
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'environment_control_method') THEN
-    CREATE TYPE environment_control_method AS ENUM ('single_select', 'textual');
+  IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'environment_control_method') THEN
+    DROP TYPE environment_control_method;
   END IF;
+  CREATE TYPE environment_control_method AS ENUM ('single_select', 'textual');
 END
 $$;
 
@@ -154,6 +158,16 @@ VALUES ('course_admin1@example.com', 'pass', 'Mr Course Admin 1', 'course_admin'
 
 INSERT INTO Webuser (email, password, full_name, user_type, notes)
 VALUES ('course_admin2@example.com', 'pass', 'Mr Course Admin 2', 'course_admin', 'notes 5');
+
+INSERT INTO Webuser (email, password, full_name, user_type, notes)
+VALUES ('lecturer1@example.com', 'pass', 'Prof Lecturer 1', 'lecturer', 'really clever');
+
+INSERT INTO Webuser (email, password, full_name, user_type, notes)
+VALUES ('lecturer2@example.com', 'pass', 'Prof Lecturer 2', 'lecturer', 'really clever 2');
+
+INSERT INTO Webuser (email, password, full_name, user_type, notes)
+VALUES ('lecturer3@example.com', 'pass', 'Prof Lecturer 3', 'lecturer', 'really clever 3');
+
 
 /* add sample courses */
 
