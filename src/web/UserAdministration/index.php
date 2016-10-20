@@ -93,6 +93,7 @@
 									<option value="dev">Developer</option>
 									<option value="user_admin">User Administrator</option>
 									<option value="course_admin">Course Administrator</option>
+									<option value="lecturer">Lecturer</option>
 							  </select>
 							</div>
 						</div>
@@ -148,6 +149,7 @@
 									<option value="dev">Developer</option>
 									<option value="user_admin">User Administrator</option>
 									<option value="course_admin">Course Administrator</option>
+									<option value="lecturer">Lecturer</option>
 							  </select>
 							</div>
 						</div>

@@ -1,9 +1,5 @@
 /* style rules added here will be loaded */
 
-select {
-
-}
-
 table {
 	max-width: none;
 }
@@ -25,14 +21,19 @@ hr {
 	margin-top: 2em;
 }
 
-#button-add-container {
+#button-unassign-container {
+	text-align: left;
+	margin-top: 1em;
+}
+
+#button-assign-container {
 	text-align: right;
 	margin-top: 1em;
 }
 
 
 .select-bigger { 
-	height: 25em!important;
+	height: 20em!important;
 }
 
 .select-smaller {

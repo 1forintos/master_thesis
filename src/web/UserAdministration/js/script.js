@@ -45,7 +45,7 @@ function fillTable(tableToFill, dataType) {
 		type: "POST",
 		url: "/crm/db/db_methods.php",
 		data: {
-			method: "loadTableData",
+			method: "loadData",
 			data: dataType
 		},
 		success: function(data) {
@@ -67,27 +67,6 @@ function addRowToTable(table, rowData) {
 		dataArray.push(rowData[key]);
 	}
 	table.row.add(dataArray).draw().node();
-}
-
-function loadUserTypesForSelect() {
-	$.ajax({
-		type: "POST",
-		url: "/crm/db/db_methods.php",
-		data: {
-			method: "loadUserTypesForSelect"
-		},
-		success: function(results) {
-			rows = jQuery.parseJSON(results);
-			var userTypesSelect = $('#select-user_types');
-			for(var i in rows) {
-				newOption = document.createElement("option");
-				newOption.innerHTML = rows[i].name;
-				newOption.setAttribute("value", rows[i].user_type);
-				storageSelect.append(newOption);
-				storageSelect.selectpicker('refresh');
-			};
-		}
-	});
 }
 
 function createNewAccount() {

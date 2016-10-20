@@ -43,7 +43,7 @@ function fillTable(tableToFill, dataType) {
 		type: "POST",
 		url: "/crm/db/db_methods.php",
 		data: {
-			method: "loadTableData",
+			method: "loadData",
 			data: dataType
 		},
 		success: function(data) {

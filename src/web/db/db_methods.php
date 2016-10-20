@@ -7,10 +7,8 @@
 	authenticate();
 
 	if(isset($_POST['method'])) {
-		if($_POST['method'] == "loadTable") {
-			loadTable($_POST['tableName']);
-		} else if($_POST['method'] == "loadTableData") {
-			loadTableData($_POST['data']);
+		if($_POST['method'] == "loadData") {
+			loadData($_POST['data']);
 		} else if($_POST['method'] == "createUserAccount") {
 			createUserAccount($_POST['data']);
 		} else if($_POST['method'] == "modifyUserAccount") {
@@ -23,24 +21,29 @@
 			modifyCourse($_POST['data']);
 		} else if($_POST['method'] == "deleteCourse") {
 			deleteCourse($_POST['data']);
-		}
+		} else if($_POST['method'] == "loadCoursesForLecturers") {
+			loadCoursesForLecturers($_POST['data']);
+		} else if($_POST['method'] == "assignLecturers") {
+			assignLecturers($_POST['data']);
+		} else if($_POST['method'] == "unassignLecturers") {
+			unassignLecturers($_POST['data']);
+		} 
 	}
 
-	function loadTableData($tableInfo) {
-		$sql = null;
-		if($tableInfo == "user_accounts") {
-			$results = pg_execute($GLOBALS['db'], "get_users", array());
-		} else {
-			if($tableInfo == "courses") {
-				$results = pg_execute($GLOBALS['db'], "get_courses", array());
-			}
-		}
+	function loadData($info) {
+		if($info == "user_accounts") {
+			$results = pg_execute($GLOBALS['db'], "load_users", array());
+		} else if($info == "courses") {
+			$results = pg_execute($GLOBALS['db'], "load_courses", array());			
+		} else if($info == "lecturers") {
+			$results = pg_execute($GLOBALS['db'], "load_lecturers", array());			
+		} 
 
-		$tableData = array();
+		$data = array();
 		while($row = pg_fetch_array($results)) {
-			$tableData[] = array();
+			$data[] = array();
 			foreach($row as $key => $value) {
-				$tableData[count($tableData) - 1][$key] = utf8_encode($value);
+				$data[count($data) - 1][$key] = utf8_encode($value);
 			}
 		}
 
@@ -48,7 +51,7 @@
 
 		$result = array(
 			"status" => "success",
-			"data" => $tableData
+			"data" => $data
 		);
 		echo json_encode($result);
 	}
@@ -219,6 +222,98 @@
 		return false;
 	}
 
+	function loadCoursesForLecturers($lecturerIds) {
+		if(!$lecturerIds) {
+			throwError("No lecturer is selected.");
+		}	
+		$tmp = array();	
+		foreach($lecturerIds as $id) {
+			$result = pg_execute($GLOBALS['db'], "courses_of_lecturer", array($id));
+			if(!$result) {
+				pg_free_result($result);
+				throwError("Failed to get lecturers course. [ID: " . $id . "]");
+			}	
+			$data = array();		
+			while($row = pg_fetch_array($result)) {						
+				$data[] = $row['course_id'];	
+			}
+			$tmp[] = array();
+			$tmp[sizeof($tmp) - 1] = $data;
+			pg_free_result($result);
+		}
+		$courseIds = reset($tmp);
+		foreach($tmp as $ids) {
+			$tmp2 = $courseIds;
+			$courseIds = array_intersect($tmp2, $ids); 
+		}
+
+		$courseIds = array_values($courseIds);
+		
+		error_log(print_r($courseIds, true));
+		$result = array(
+			"status" => "success",
+			"data" => $courseIds
+		);
+		echo json_encode($result);		
+	}
+
+	function lecturerExists($id) {
+		$result = pg_execute($GLOBALS['db'], "lecturer_exists", array($id));
+		$result = pg_fetch_array($result);
+
+		if($result['lecturer_exists']) {
+			return true;
+		}
+		return false;
+	}
+
+	function assignLecturers($data) {		
+		foreach($data['lecturerIds'] as $lecturerId) {
+			if(!lecturerExists($lecturerId)) {
+				throwError("Lecturer not found. ID [" . $lecturerId . "]");
+			}
+			unassignLecturer($lecturerId);
+			foreach($data['courseIds'] as $courseId) {
+				if(!courseExists($courseId)) {
+					throwError("Course not found. ID [" . $courseId . "]");
+				}
+				$result = pg_execute($GLOBALS['db'], "assign_lecturer", array(
+					$lecturerId, $courseId
+				));
+
+				if(!$result) {
+					pg_free_result($result);
+					throwError("Failed to assign lecturer to course. " 
+						. "[UserID: " . $lecturerId . " CourseID: " . $courseId . "]");
+				}
+			}
+		}
+		
+		echo "success";
+	}
+
+	function unassignLecturer($lecturerId) {
+		if(!lecturerExists($lecturerId)) {
+			throwError("Lecturer not found. ID [" . $lecturerId . "]");
+		}
+		$result = pg_execute($GLOBALS['db'], "unassign_lecturer", array(
+			$lecturerId
+		));
+
+		if(!$result) {
+			pg_free_result($result);
+			throwError("Failed to unassign lecturer. [UserID: " . $lecturerId . "]");
+		}
+	}
+
+	function unassignLecturers($data) {
+		foreach($data['lecturerIds'] as $lecturerId) {
+			unassignLecturer($lecturerId);
+		}
+		
+		echo "success";
+	}
+
 	function throwError($msg) {
 		$errorData = array(
 			"error" => $msg
@@ -235,7 +330,7 @@
 			SELECT id, email, full_name, notes, user_type, timestamp::date
 			FROM Webuser
 		";
-		$results[] = pg_prepare($GLOBALS['db'], "get_users", $sql);
+		$results[] = pg_prepare($GLOBALS['db'], "load_users", $sql);
 
 		$sql = "
 			SELECT COUNT(*) AS user_exists
@@ -280,7 +375,7 @@
 			SELECT id, course_code, title, notes, timestamp::date
 			FROM Course
 		";
-		$results[] = pg_prepare($GLOBALS['db'], "get_courses", $sql);
+		$results[] = pg_prepare($GLOBALS['db'], "load_courses", $sql);
 
 		$sql = "
 			SELECT COUNT(*) AS course_exists
@@ -318,6 +413,43 @@
 			WHERE id = $4
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "modify_course", $sql);
+
+
+		# LECTURERS
+		$sql = "
+			SELECT id, email, full_name
+			FROM Webuser
+			WHERE user_type = 'lecturer'
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "load_lecturers", $sql);
+
+		$sql = "
+			SELECT course_id
+			FROM Lecturer
+			WHERE user_id = $1				
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "courses_of_lecturer", $sql);
+
+		$sql = "
+			INSERT INTO Lecturer(user_id, course_id)
+			VALUES($1, $2)							
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "assign_lecturer", $sql);
+
+		$sql = "
+			SELECT COUNT(*) AS lecturer_exists
+			FROM Webuser
+			WHERE 
+				id = $1
+				AND user_type = 'lecturer'
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "lecturer_exists", $sql);
+
+		$sql = "
+			DELETE FROM Lecturer
+			WHERE user_id = $1
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "unassign_lecturer", $sql);
 
 
 		foreach($results as $result) {

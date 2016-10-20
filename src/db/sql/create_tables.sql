@@ -72,7 +72,8 @@ CREATE TABLE Lecturer (
   user_id integer REFERENCES Webuser (id) NOT NULL,
   course_id integer REFERENCES Course (id) NOT NULL,
   notes varchar(100),
-  timestamp TIMESTAMP DEFAULT now()
+  timestamp TIMESTAMP DEFAULT now(),
+  CONSTRAINT u_constraint UNIQUE (user_id, course_id)
 );
 
 CREATE TABLE Student (
@@ -182,5 +183,21 @@ VALUES ('C3', 'Course Title 3', '');
 
 INSERT INTO Course (course_code, title, notes)
 VALUES ('C4', 'Course Title 4', 'course notes 4');
+
+/* assign lecturers to courses */
+INSERT INTO Lecturer (user_id, course_id)
+VALUES (6, 1);
+
+INSERT INTO Lecturer (user_id, course_id)
+VALUES (6, 2);
+
+INSERT INTO Lecturer (user_id, course_id)
+VALUES (8, 4);
+
+INSERT INTO Lecturer (user_id, course_id)
+VALUES (8, 3);
+
+INSERT INTO Lecturer (user_id, course_id)
+VALUES (6, 4);
 
 COMMIT;
