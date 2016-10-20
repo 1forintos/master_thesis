@@ -100,8 +100,7 @@ function updateCoursesSelect() {
 			method: "loadCoursesForLecturers"
 		},
 		success: function(result) {
-			var result = $.parseJSON(result);
-			console.log(result);
+			var result = $.parseJSON(result);			
 			if('status' in result) {
 				if(result.status == "success") {
 					var select = null;
@@ -130,6 +129,10 @@ function assignLecturers() {
 	} else {
 		selectC = $('#select-courses-xs');
 	}	
+	if(selectL.val() == null || selectC.val() == null) {
+		alert("Please select the Lecturer(s) and Course(s) to make the assignment(s).");
+		return;
+	} 
 	var data = {};
 	data.lecturerIds = selectL.val();
 	data.courseIds = selectC.val();
@@ -147,7 +150,7 @@ function assignLecturers() {
 			} else {
 				var resultObj = $.parseJSON(result);
 				if('error' in resultObj) {
-					alert(resultObj.error);
+					alert("Error: " + resultObj.error);
 				} else {
 					console.log("What the heck happened??");
 				}
@@ -163,6 +166,11 @@ function unassignLecturers() {
 	} else {
 		selectL = $('#select-lecturers-xs');
 	}
+		
+	if(selectL.val() == null) {
+		alert("Please select the Lecturer(s) remove assignments.");
+		return;
+	} 
 	var data = {};
 	data.lecturerIds = selectL.val();
 	$.ajax({
@@ -179,7 +187,7 @@ function unassignLecturers() {
 			} else {
 				var resultObj = $.parseJSON(result);
 				if('error' in resultObj) {
-					alert(resultObj.error);
+					alert("Error: " + resultObj.error);
 				} else {
 					console.log("What the heck happened??");
 				}

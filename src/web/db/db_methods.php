@@ -247,9 +247,7 @@
 			$courseIds = array_intersect($tmp2, $ids); 
 		}
 
-		$courseIds = array_values($courseIds);
-		
-		error_log(print_r($courseIds, true));
+		$courseIds = array_values($courseIds);				
 		$result = array(
 			"status" => "success",
 			"data" => $courseIds
@@ -268,6 +266,12 @@
 	}
 
 	function assignLecturers($data) {		
+		if(!$data['lecturerIds']) {
+			throwError("No lecturer selected.");
+		}
+		if(!$data['courseIds']) {
+			throwError("No lecturer selected.");
+		}
 		foreach($data['lecturerIds'] as $lecturerId) {
 			if(!lecturerExists($lecturerId)) {
 				throwError("Lecturer not found. ID [" . $lecturerId . "]");
