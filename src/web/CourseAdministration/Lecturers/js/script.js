@@ -7,9 +7,12 @@ $(document).ready(function() {
     });
 
 	loadLecturersIntoSelect();
-	loadCoursesIntoSelect();
+	loadCoursesIntoSelect(showContent);
 });
 
+function showContent() {
+	$('#content').show();
+}
 
 function loadLecturersIntoSelect() {
 	$.ajax({
@@ -55,7 +58,7 @@ function loadLecturersIntoSelect() {
 	});
 }
 
-function loadCoursesIntoSelect() {
+function loadCoursesIntoSelect(_callback) {
 	$.ajax({
 		type: "POST",
 		url: "/crm/db/db_methods.php",
@@ -80,8 +83,15 @@ function loadCoursesIntoSelect() {
 						select.append(newOption);	
 					}
 				}
-			} 
+			}
+			_callback(); 
+		},
+		error: function(result) {
+			_callback();
+			alert("Something went wrong.");
+			console.log(result);
 		}
+
 	});
 }
 

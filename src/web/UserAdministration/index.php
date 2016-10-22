@@ -7,7 +7,7 @@
 	include("header/header_begin.php");
 ?>
 
-<div id="content" class="container">
+<div id="content" class="container" hidden>
 	<div class="panel panel-default">
 	  <div class="panel-heading">
 	    <h3 class="panel-title">Users</h3>
@@ -32,7 +32,7 @@
 		                <th width="20%">Full Name</th>
 		                <th width="23%">Notes</th>
 		                <th>User Type</th>
-		                <th width="5%">Timestamp</th>
+		                <th width="5%">Last Modification</th>
 		                <th width="5%">Edit</th>
 		                <th width="5%">Delete</th>
 			            </tr>

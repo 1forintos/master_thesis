@@ -1,65 +1,109 @@
 $(document).ready(function() {
-	var table = $('#table-user_accounts').DataTable({
-			"columnDefs": [ {
-					"targets": -2,
-					"data": null,
-					"defaultContent": '<button class="button-edit btn btn-default glyphicon glyphicon-pencil" data-toggle="modal" data-target="#popup-edit"></button>'
-			}, {
-					"targets": -1,
-					"data": null,
-					"defaultContent": '<button class="button-remove btn btn-default glyphicon glyphicon-remove"></button>'
-			}
+	studentTable = $('#table-students').DataTable({
+		"columnDefs": [ 
 	]});
-
-	selectedUserAccountId = null;
-
-	$('#table-user_accounts tbody').on( 'click', '.button-edit', function () {
-		var data = table.row( $(this).parents('tr') ).data();
-		$('#input-email').val(data[1]);
-		$('#input-full_name').val(data[2]);
-		$('#input-notes').val(data[3]);
-		console.log(data[4]);
-		$('#select-user_type').val(data[4]).change();
-		selectedTemplateId = data[0];
+	$('#confirm-remove').on('show.bs.modal', function(e) {
+		$(this).find('.btn-ok').on('click', function() {
+			removeEnrollment();
+		});		
+	});	
+	$('.button-view').on( 'click', function () {
+		loadEnrollment();
 	});
-
-	$('#table-user_accounts tbody').on( 'click', '.button-remove', function () {
-		var data = table.row($(this).parents('tr')).data();
-		deleteUserAccount(data[1]);
+	$('.button-upload').on( 'click', function () {
+		uploadEnrollment();
 	});
-
-	fillTable(table, 'user_accounts');
-
-	$('#popup-button-save-modifications').click(function() {
-		alert("SUBMIT CHANGES");
-		// submitChanges();
-	});
-
-	$('#popup-button-save-new').on( 'click', function () {
-		createNewAccount();
-	});
-
-	//loadStoragesIntoSelect();
-	//loadItemTypesIntoSelect();
-
+	$('#select-course').selectpicker();
+	loadCoursesIntoSelect(showContent);	
 });
 
-function fillTable(tableToFill, dataType) {
-	tableToFill.clear();
+function showContent() {
+	$('#content').show();
+}
+
+function loadCoursesIntoSelect(_callback) {
 	$.ajax({
 		type: "POST",
 		url: "/crm/db/db_methods.php",
 		data: {
-			method: "loadTableData",
-			data: dataType
+			data: "courses",
+			method: "loadData"
+		},
+		success: function(result) {
+			var result = $.parseJSON(result);
+			if('status' in result) {
+				if(result.status == "success") {
+					var select = null;
+					select = $('#select-course');
+					for(var i in result.data) {
+						var newOption = document.createElement("option");				
+						newOption.innerHTML = result.data[i].title + " (" + result.data[i].course_code + ")"; 
+						newOption.setAttribute("value", result.data[i].id);
+						select.append(newOption);							
+					}
+					select.selectpicker('refresh');					
+				}
+			} 
+			_callback();
+		},
+		error: function(result) {
+			_callback();
+			alert("Something went wrong.");
+			console.log(result);
+		}
+	});
+}
+
+function loadEnrollment() {
+	$.ajax({
+		type: "POST",
+		url: "/crm/db/db_methods.php",
+		data: {
+			data: $('#select-course').val(),
+			method: "loadEnrollment"
 		},
 		success: function(data) {
 			var results = $.parseJSON(data);
+			console.log(results);
 			if('status' in results) {
 				if(results.status == "success") {
+					studentTable.clear();
+					var rowNum = 1;
 					for(var i in results.data) {
-						addRowToTable(tableToFill, results.data[i]);
+						var rowData = {};
+						rowData.rowNum = rowNum;
+						rowData.student_id = results.data[i].student_id
+						addRowToTable(studentTable, rowData);
+						rowNum++;
 					}
+				}
+			}
+		},
+		error: function(result) {
+			alert("Something went wrong.");
+			console.log(result);
+		}
+	});
+}
+
+function removeEnrollment() {
+	$.ajax({
+		type: "POST",
+		url: "/crm/db/db_methods.php",
+		data: {
+			method: "removeEnrollment",
+			data: $('#select-course').val()
+		},
+		success: function(result) {
+			if(result.indexOf("success") > -1) {				
+				alert("Success!");
+				location.reload();
+			} else {
+				var resultObj = $.parseJSON(result);
+				if('error' in resultObj) {
+					alert("Failed to remove enrollment: " + resultObj.error);
+				} else {
+					console.log("What the heck happened??");
 				}
 			}
 		}
@@ -67,6 +111,7 @@ function fillTable(tableToFill, dataType) {
 }
 
 function addRowToTable(table, rowData) {
+	console.log(rowData);
 	var dataArray = [];
 	for(var key in rowData) {
 		dataArray.push(rowData[key]);
@@ -74,106 +119,45 @@ function addRowToTable(table, rowData) {
 	table.row.add(dataArray).draw().node();
 }
 
-function loadUserTypesForSelect() {
-	$.ajax({
-		type: "POST",
-		url: "/crm/db/db_methods.php",
-		data: {
-			method: "loadUserTypesForSelect"
-		},
-		success: function(results) {
-			rows = jQuery.parseJSON(results);
-			var userTypesSelect = $('#select-user_types');
-			for(var i in rows) {
-				newOption = document.createElement("option");
-				newOption.innerHTML = rows[i].name;
-				newOption.setAttribute("value", rows[i].user_type);
-				storageSelect.append(newOption);
-				storageSelect.selectpicker('refresh');
-			};
-		}
-	});
-}
-
-function createNewAccount() {
-	var email = $('#input-new-email').val().trim();
-	var fullName = $('#input-new-full_name').val().trim();
-	var notes = $('#input-new-notes').val().trim();
-	var userType = $('#select-user_type').val();
-
-	var invalidInput = false;
-	if(email == "") {
-		$('#input-new-email').addClass("danger");
-		invalidInput = true;
+function assignLecturers() {
+	var selectL = null;
+	if($('.visible-xs').is(':hidden')) {
+		selectL = $('#select-lecturers');
 	} else {
-		$('#input-new-email').removeClass("danger");
+		selectL = $('#select-lecturers-xs');
 	}
-
-	if(fullName == "") {
-		$('#input-new-full_name').addClass("danger");
-		invalidInput = true;
+	var selectC = null;
+	if($('.visible-xs').is(':hidden')) {
+		selectC = $('#select-courses');
 	} else {
-		$('#input-new-full_name').removeClass("danger");
-	}
-
-	if(invalidInput) {
-		alert("\"E-mail\" and \"Full Name\" cannot be empty.");
+		selectC = $('#select-courses-xs');
+	}	
+	if(selectL.val() == null || selectC.val() == null) {
+		alert("Please select the Lecturer(s) and Course(s) to make the assignment(s).");
 		return;
-	}
-
-	var accountData = {};
-	accountData.email = email;
-	accountData.full_name = fullName;
-	accountData.notes = notes;
-	accountData.user_type = userType;
-
+	} 
+	var data = {};
+	data.lecturerIds = selectL.val();
+	data.courseIds = selectC.val();
 	$.ajax({
 		type: "POST",
 		url: "/crm/db/db_methods.php",
 		data: {
-			method: "createUserAccount",
-			data: accountData
+			data: data,
+			method: "assignLecturers"
 		},
 		success: function(result) {
-			console.log(result);
-			if(result.indexOf("success") > -1) {
-				alert("Success!");
-				location.reload();
+			if(result == "success") {
+				alert("Success.");
+				location.reload();					
 			} else {
 				var resultObj = $.parseJSON(result);
 				if('error' in resultObj) {
-					alert("Failed to create account: " + resultObj.error);
+					alert("Error: " + resultObj.error);
 				} else {
 					console.log("What the heck happened??");
 				}
-			}
-		}
-	});
-}
-
-function deleteUserAccount(email) {
-	var accountData = {};
-	accountData.email = email;
-
-	$.ajax({
-		type: "POST",
-		url: "/crm/db/db_methods.php",
-		data: {
-			method: "deleteUserAccount",
-			data: accountData
-		},
-		success: function(result) {
-			if(result.indexOf("success") > -1) {
-				alert("Success!");
-				location.reload();
-			} else {
-				var resultObj = $.parseJSON(result);
-				if('error' in resultObj) {
-					alert("Failed to delete account: " + resultObj.error);
-				} else {
-					console.log("What the heck happened??");
-				}
-			}
+			} 
 		}
 	});
 }

@@ -1,10 +1,7 @@
 body {
 	background-color: #AAA;
-	background: url(/crm/pics/background.png) no-repeat center center fixed;
-	  -webkit-background-size: cover;
-	  -moz-background-size: cover;
-	  -o-background-size: cover;
-	  background-size: cover;
+	background-image: url(/crm/pics/subtle_hexagon.jpg);
+    background-repeat: repeat-xy;
 }
 
 .dropdown-menu {
@@ -16,4 +13,8 @@ body {
 	height: 2em;
 	position: relative;
 	bottom: 40%;
+}
+
+header {
+	font-weight: bold;
 }

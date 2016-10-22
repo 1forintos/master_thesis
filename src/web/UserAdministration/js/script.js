@@ -27,7 +27,7 @@ $(document).ready(function() {
 		deleteUserAccount(data[0]);
 	});
 
-	fillTable(table, 'user_accounts');
+	fillTable(table, 'user_accounts', showContent);
 
 	$('#popup-button-save-new').on( 'click', function () {
 		createNewAccount();
@@ -39,7 +39,11 @@ $(document).ready(function() {
 
 });
 
-function fillTable(tableToFill, dataType) {
+function showContent() {
+	$('#content').show();
+}
+
+function fillTable(tableToFill, dataType, _callback) {
 	tableToFill.clear();
 	$.ajax({
 		type: "POST",
@@ -57,6 +61,12 @@ function fillTable(tableToFill, dataType) {
 					}
 				}
 			}
+			_callback();
+		},
+		error: function(result) {
+			_callback();
+			alert("Something went wrong.");
+			console.log(result);
 		}
 	});
 }

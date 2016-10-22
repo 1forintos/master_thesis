@@ -26,7 +26,7 @@ $(document).ready(function() {
 		deleteCourse(data[0]);
 	});
 
-	fillTable(table, 'courses');
+	fillTable(table, 'courses', showContent);
 
 	$('#popup-button-save-modifications').click(function() {
 		modifyCourse();
@@ -37,7 +37,11 @@ $(document).ready(function() {
 	});
 });
 
-function fillTable(tableToFill, dataType) {
+function showContent() {
+	$('#content').show();
+}
+
+function fillTable(tableToFill, dataType, _callback) {
 	tableToFill.clear();
 	$.ajax({
 		type: "POST",
@@ -55,6 +59,12 @@ function fillTable(tableToFill, dataType) {
 					}
 				}
 			}
+			_callback();
+		},
+		error: function(result) {
+			_callback();
+			alert("Something went wrong.");
+			console.log(result);
 		}
 	});
 }
@@ -193,7 +203,7 @@ function deleteCourse(id) {
 			} else {
 				var resultObj = $.parseJSON(result);
 				if('error' in resultObj) {
-					alert("Failed to delete account: " + resultObj.error);
+					alert("Failed to delete course: " + resultObj.error);
 				} else {
 					console.log("What the heck happened??");
 				}

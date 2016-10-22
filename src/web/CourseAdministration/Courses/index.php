@@ -7,7 +7,7 @@
 	include("header/header_begin.php");
 ?>
 
-<div id="content" class="container">
+<div id="content" class="container" hidden>
 	<div class="panel panel-default">
 	  <div class="panel-heading">
 	    <h3 class="panel-title">Courses</h3>
@@ -31,7 +31,7 @@
 			                <th width="18%">Course Code</th>
 			                <th width="30%">Title</th>
 			                <th>Notes</th>
-			                <th width="5%">Timestamp</th>
+			                <th width="5%">Last Modification</th>
 			                <th width="5%">Edit</th>
 			                <th width="5%">Delete</th>
 				            </tr>

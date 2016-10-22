@@ -27,6 +27,10 @@
 			assignLecturers($_POST['data']);
 		} else if($_POST['method'] == "unassignLecturers") {
 			unassignLecturers($_POST['data']);
+		} else if($_POST['method'] == "loadEnrollment") {
+			loadEnrollment($_POST['data']);
+		} else if($_POST['method'] == "removeEnrollment") {
+			removeEnrollment($_POST['data']);
 		} 
 	}
 
@@ -318,6 +322,54 @@
 		echo "success";
 	}
 
+	/* ENROLLMENT */
+	function loadEnrollment($courseId) {
+		if(!$courseId) {
+			throwError("No course selected.");
+		}
+		if(!courseExists($courseId)) {
+			throwError("Course not found. [ID: " . $courseId . "]");
+		}
+		$results = pg_execute($GLOBALS['db'], "load_enrollment", array($courseId));
+		
+		$data = array();
+		while($row = pg_fetch_array($results)) {
+			$data[] = array();
+			foreach($row as $key => $value) {
+				$data[count($data) - 1][$key] = utf8_encode($value);
+			}
+		}
+
+		pg_free_result($results);
+
+		$result = array(
+			"status" => "success",
+			"data" => $data
+		);
+		echo json_encode($result);
+	}
+
+	function removeEnrollment($courseId) {
+		if(!$courseId) {
+			throwError("No course selected.");
+		}
+		if(!courseExists($courseId)) {
+			throwError("Course not found. ID [" . $courseId . "]");
+		}
+
+		$result = pg_execute($GLOBALS['db'], "remove_enrollment", array(
+			$courseId
+		));
+
+		if(!$result) {
+			pg_free_result($result);
+			throwError("Failed to delete course.");
+		}
+		pg_free_result($result);
+
+		echo "success";
+	}
+
 	function throwError($msg) {
 		$errorData = array(
 			"error" => $msg
@@ -331,7 +383,7 @@
 
 		# USER ACCOUNTS
 		$sql = "
-			SELECT id, email, full_name, notes, user_type, timestamp::date
+			SELECT id, email, full_name, notes, user_type, last_modification::date
 			FROM Webuser
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "load_users", $sql);
@@ -357,7 +409,7 @@
 		$results[] = pg_prepare($GLOBALS['db'], "delete_user", $sql);
 
 		$sql = "
-			INSERT INTO Webuser (email, password, full_name, user_type, notes, timestamp)
+			INSERT INTO Webuser (email, password, full_name, user_type, notes, last_modification)
 			VALUES ($1, '', $2, $3, $4, now());
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "create_user", $sql);
@@ -368,7 +420,7 @@
 				full_name = $1,
 				user_type = $2,
 				notes = $3,
-				timestamp = now()
+				last_modification = now()
 			WHERE id = $4
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "modify_user", $sql);
@@ -376,7 +428,7 @@
 		# COURSES
 
 		$sql = "
-			SELECT id, course_code, title, notes, timestamp::date
+			SELECT id, course_code, title, notes, last_modification::date
 			FROM Course
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "load_courses", $sql);
@@ -402,7 +454,7 @@
 		$results[] = pg_prepare($GLOBALS['db'], "delete_course", $sql);
 
 		$sql = "
-			INSERT INTO Course (course_code, title, notes, timestamp)
+			INSERT INTO Course (course_code, title, notes, last_modification)
 			VALUES ($1, $2, $3, now());
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "create_course", $sql);
@@ -413,7 +465,7 @@
 				course_code = $1,
 				title = $2,
 				notes = $3,
-				timestamp = now()
+				last_modification = now()
 			WHERE id = $4
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "modify_course", $sql);
@@ -455,6 +507,19 @@
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "unassign_lecturer", $sql);
 
+		/* enrollments */
+		$sql = "
+			SELECT id, student_id
+			FROM Enrollment
+			WHERE course_id = $1
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "load_enrollment", $sql);
+
+		$sql = "
+			DELETE FROM Enrollment
+			WHERE course_id = $1
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "remove_enrollment", $sql);
 
 		foreach($results as $result) {
 			if(!$result) {

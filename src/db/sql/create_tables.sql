@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS Measurement CASCADE;
 DROP TABLE IF EXISTS Room CASCADE;
 DROP TABLE IF EXISTS Lecture CASCADE;
 DROP TABLE IF EXISTS Course CASCADE;
-DROP TABLE IF EXISTS Student CASCADE;
+DROP TABLE IF EXISTS Enrollment CASCADE;
 DROP TABLE IF EXISTS Lecturer CASCADE;
 DROP TABLE IF EXISTS Webuser CASCADE;
 
@@ -56,7 +56,7 @@ CREATE TABLE Webuser (
   full_name varchar(100) NOT NULL,
   user_type user_type NOT NULL,
   notes varchar(100),
-  timestamp TIMESTAMP DEFAULT now()
+  last_modification TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE Course (
@@ -64,7 +64,7 @@ CREATE TABLE Course (
   course_code varchar(50) UNIQUE NOT NULL,
   title varchar(100) NOT NULL,
   notes varchar(100),
-  timestamp TIMESTAMP DEFAULT now()
+  last_modification TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE Lecturer (
@@ -72,21 +72,21 @@ CREATE TABLE Lecturer (
   user_id integer REFERENCES Webuser (id) NOT NULL,
   course_id integer REFERENCES Course (id) NOT NULL,
   notes varchar(100),
-  timestamp TIMESTAMP DEFAULT now(),
+  last_modification TIMESTAMP DEFAULT now(),
   CONSTRAINT u_constraint UNIQUE (user_id, course_id)
 );
 
-CREATE TABLE Student (
+CREATE TABLE Enrollment (
   id serial PRIMARY KEY,
-  name varchar(100) NOT NULL,
-  notes varchar(100),
-  timestamp TIMESTAMP DEFAULT now()
+  course_id integer REFERENCES Course (id) NOT NULL,
+  student_id varchar(100) NOT NULL,
+  last_modification TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE Room (
   id serial PRIMARY KEY,
   name varchar(100) NOT NULL,
-  timestamp TIMESTAMP DEFAULT now()
+  last_modification TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE Lecture (
@@ -95,20 +95,20 @@ CREATE TABLE Lecture (
   lecture_date TIMESTAMP NOT NULL,
   rooom_id integer REFERENCES Room (id) NOT NULL,
   notes varchar(100),
-  timestamp TIMESTAMP DEFAULT now()
+  last_modification TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE Measurement (
   id serial PRIMARY KEY,
   type measurement_type NOT NULL,
   room_id integer REFERENCES Room (id) NOT NULL,
-  timestamp TIMESTAMP DEFAULT now()
+  last_modification TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE Form (
   id serial PRIMARY KEY,
   title varchar(100) NOT NULL,
-  timestamp TIMESTAMP DEFAULT now()
+  last_modification TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE Question (
@@ -116,7 +116,7 @@ CREATE TABLE Question (
   text varchar(200) UNIQUE NOT NULL,
   type question_type NOT NULL,
   notes varchar(100),
-  timestamp TIMESTAMP DEFAULT now()
+  last_modification TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE Answer_Option (
@@ -124,14 +124,14 @@ CREATE TABLE Answer_Option (
   question_id integer REFERENCES Question (id) NOT NULL,
   text varchar(50) NOT NULL,
   position integer NOT NULL,
-  timestamp TIMESTAMP DEFAULT now()
+  last_modification TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE Question_Of_Form (
   id serial PRIMARY KEY,
   form_id integer REFERENCES Form (id) NOT NULL,
   question_id integer REFERENCES Question (id) NOT NULL,
-  timestamp TIMESTAMP DEFAULT now()
+  last_modification TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE Environment_Control_Setting (
@@ -139,7 +139,7 @@ CREATE TABLE Environment_Control_Setting (
   threshold real NOT NULL,
   control_method environment_control_method NOT NULL,
   notes varchar(100) NOT NULL,
-  timestamp TIMESTAMP DEFAULT now()
+  last_modification TIMESTAMP DEFAULT now()
 );
 
 
@@ -199,5 +199,32 @@ VALUES (8, 3);
 
 INSERT INTO Lecturer (user_id, course_id)
 VALUES (6, 4);
+
+
+/* Enroll students to courses */
+
+INSERT INTO Enrollment (course_id, student_id)
+VALUES (1, 'H9S38H');
+
+INSERT INTO Enrollment (course_id, student_id)
+VALUES (1, 'GJ0RZR');
+
+INSERT INTO Enrollment (course_id, student_id)
+VALUES (2, 'YN4RIN');
+
+INSERT INTO Enrollment (course_id, student_id)
+VALUES (2, 'VJZX0K');
+
+INSERT INTO Enrollment (course_id, student_id)
+VALUES (2, '39GN8V');
+
+INSERT INTO Enrollment (course_id, student_id)
+VALUES (2, 'CFUXYO');
+
+INSERT INTO Enrollment (course_id, student_id)
+VALUES (4, 'HTIVON');
+
+INSERT INTO Enrollment (course_id, student_id)
+VALUES (4, 'LZ3I2O');
 
 COMMIT;
