@@ -25,17 +25,14 @@
 		<div class="row">
 			<div class="form-group">
 				<div class="col-sm-6">
-					<label for="courses" class="col-sm-6 control-label">Lecturers</label>							
-					<select id="select-lecturers" class="visible-md visible-lg form-control select-bigger" multiple="multiple"></select>  
-					<select id="select-lecturers-xs" class="visible-xs form-control lecturers select-smaller" multiple="multiple"></select>          						
+					<label for="courses" class="col-sm-6 control-label">Lecturers</label>
+					<select id="select-lecturers" class=" form-control" multiple="multiple"></select>
 				</div>
 				<div class="col-sm-6">
-					<label for="courses" class="visible-md visible-lg col-sm-6 control-label">Courses</label>
-					<label for="courses" class="visible-xs col-sm-6 control-label label-smaller">Courses</label>
-					<select id="select-courses" class="visible-md visible-lg form-control courses select-bigger"  multiple="multiple"></select>     
-					<select id="select-courses-xs" class="visible-xs form-control courses select-smaller" multiple="multiple"></select>         						
+					<label for="courses" class="col-sm-6 control-label">Courses</label>
+					<select id="select-courses" class="form-control courses"  multiple="multiple"></select>
 				</div>
-			</div>		  
+			</div>
 		</div>
 		<div class="row">
 			<div class="col-xs-5" id="button-unassign-container">

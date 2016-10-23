@@ -27,10 +27,10 @@
 			assignLecturers($_POST['data']);
 		} else if($_POST['method'] == "unassignLecturers") {
 			unassignLecturers($_POST['data']);
-		} else if($_POST['method'] == "loadEnrollment") {
-			loadEnrollment($_POST['data']);
-		} else if($_POST['method'] == "removeEnrollment") {
-			removeEnrollment($_POST['data']);
+		} else if($_POST['method'] == "loadEnrollments") {
+			loadEnrollments($_POST['data']);
+		} else if($_POST['method'] == "removeEnrollments") {
+			removeEnrollments($_POST['data']);
 		} 
 	}
 
@@ -323,14 +323,14 @@
 	}
 
 	/* ENROLLMENT */
-	function loadEnrollment($courseId) {
+	function loadEnrollments($courseId) {
 		if(!$courseId) {
 			throwError("No course selected.");
 		}
 		if(!courseExists($courseId)) {
 			throwError("Course not found. [ID: " . $courseId . "]");
 		}
-		$results = pg_execute($GLOBALS['db'], "load_enrollment", array($courseId));
+		$results = pg_execute($GLOBALS['db'], "load_enrollments", array($courseId));
 		
 		$data = array();
 		while($row = pg_fetch_array($results)) {
@@ -349,7 +349,7 @@
 		echo json_encode($result);
 	}
 
-	function removeEnrollment($courseId) {
+	function removeEnrollments($courseId) {
 		if(!$courseId) {
 			throwError("No course selected.");
 		}
@@ -357,7 +357,7 @@
 			throwError("Course not found. ID [" . $courseId . "]");
 		}
 
-		$result = pg_execute($GLOBALS['db'], "remove_enrollment", array(
+		$result = pg_execute($GLOBALS['db'], "remove_enrollments", array(
 			$courseId
 		));
 
@@ -369,6 +369,45 @@
 
 		echo "success";
 	}
+
+	function insertEnrollments($courseId, $studentIds) {
+		if(!$courseId) {
+			throwError("No course selected.");
+		}
+		if(!courseExists($courseId)) {
+			throwError("Course not found. ID [" . $courseId . "]");
+		}
+		if(!$studentIds) {
+			throwError("No student IDs.");
+		}
+
+		foreach($studentIds as $studentId) {
+			if(!studentEnrolled($courseId, $studentId)) {
+				$result = pg_execute($GLOBALS['db'], "enroll_student", array(
+					$courseId, $studentId
+				));
+
+				if(!$result) {
+					pg_free_result($result);
+					throwError("Failed to enroll student. ID [" . $studentId . "]");
+				}
+				pg_free_result($result);
+			}
+		}
+	}
+
+	function studentEnrolled($courseId, $studentId) {
+		$result = pg_execute($GLOBALS['db'], "student_enrolled", array(
+			$courseId, $studentId
+		));
+		$result = pg_fetch_array($result);
+
+		if($result['student_enrolled']) {
+			return true;
+		}
+		return false;
+	}
+
 
 	function throwError($msg) {
 		$errorData = array(
@@ -513,13 +552,27 @@
 			FROM Enrollment
 			WHERE course_id = $1
 		";
-		$results[] = pg_prepare($GLOBALS['db'], "load_enrollment", $sql);
+		$results[] = pg_prepare($GLOBALS['db'], "load_enrollments", $sql);
 
 		$sql = "
 			DELETE FROM Enrollment
 			WHERE course_id = $1
 		";
-		$results[] = pg_prepare($GLOBALS['db'], "remove_enrollment", $sql);
+		$results[] = pg_prepare($GLOBALS['db'], "remove_enrollments", $sql);
+
+		$sql = "
+			SELECT COUNT(*) as student_enrolled 
+			FROM Enrollment
+			WHERE course_id = $1
+				AND student_id = $2
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "student_enrolled", $sql);
+
+		$sql = "
+			INSERT INTO Enrollment(course_id, student_id)
+			VALUES($1, $2)
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "enroll_student", $sql);
 
 		foreach($results as $result) {
 			if(!$result) {

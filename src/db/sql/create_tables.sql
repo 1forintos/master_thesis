@@ -171,7 +171,6 @@ VALUES ('lecturer3@example.com', 'pass', 'Prof Lecturer 3', 'lecturer', 'really 
 
 
 /* add sample courses */
-
 INSERT INTO Course (course_code, title, notes)
 VALUES ('C1', 'Course Title 1', 'decent course');
 

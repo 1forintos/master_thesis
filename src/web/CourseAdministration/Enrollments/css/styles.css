@@ -29,3 +29,7 @@ hr {
 #label-container {
 	margin-top: 0.5em;
 }
+
+#buttons-container button {
+	margin-top: 0.5em;
+}

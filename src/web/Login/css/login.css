@@ -1,11 +1,18 @@
 @import url(http://fonts.googleapis.com/css?family=Roboto);
 
+body {
+
+  background-color: #AAA;
+	background-image: url(../../pics/subtle_hexagon.jpg);
+  background-repeat: repeat-xy;
+}
+
 /****** LOGIN MODAL ******/
 .loginmodal-container {
   padding: 1.5em;
   max-width: 350px;
   width: 100% !important;
-  background-color: #333;
+  background-color: #222;
   margin: 0 auto;
   border-radius: 4px;
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);

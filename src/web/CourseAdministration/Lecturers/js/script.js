@@ -26,12 +26,7 @@ function loadLecturersIntoSelect() {
 			var result = $.parseJSON(result);
 			if('status' in result) {
 				if(result.status == "success") {
-					var select = null;
-					if($('.visible-xs').is(':hidden')) {
-						select = $('#select-lecturers');
-					} else {
-						select = $('#select-lecturers-xs');
-					}
+					var select = $('#select-lecturers');
 					
 					for(var i in result.data) {
 						var newOption = document.createElement("option");				
@@ -43,12 +38,7 @@ function loadLecturersIntoSelect() {
 						if($(this).val() != null) {
 							updateCoursesSelect();
 						} else {
-							var selectC = null;
-							if($('.visible-xs').is(':hidden')) {
-								selectC = $('#select-courses');
-							} else {
-								selectC = $('#select-courses-xs');
-							}
+							var selectC = $('#select-courses');
 							selectC.val([]);
 						}						
 					});
@@ -70,12 +60,7 @@ function loadCoursesIntoSelect(_callback) {
 			var result = $.parseJSON(result);
 			if('status' in result) {
 				if(result.status == "success") {
-					var select = null;
-					if($('.visible-xs').is(':hidden')) {
-						select = $('#select-courses');
-					} else {
-						select = $('#select-courses-xs');
-					}
+					var select = $('#select-courses');
 					for(var i in result.data) {
 						var newOption = document.createElement("option");				
 						newOption.innerHTML = result.data[i].title + " (" + result.data[i].course_code + ")"; 
@@ -96,12 +81,7 @@ function loadCoursesIntoSelect(_callback) {
 }
 
 function updateCoursesSelect() {
-	var selectL = null;
-	if($('.visible-xs').is(':hidden')) {
-		selectL = $('#select-lecturers');
-	} else {
-		selectL = $('#select-lecturers-xs');
-	}	
+	var selectL = $('#select-lecturers');
 	$.ajax({
 		type: "POST",
 		url: "/crm/db/db_methods.php",
@@ -113,12 +93,7 @@ function updateCoursesSelect() {
 			var result = $.parseJSON(result);			
 			if('status' in result) {
 				if(result.status == "success") {
-					var select = null;
-					if($('.visible-xs').is(':hidden')) {
-						select = $('#select-courses');
-					} else {
-						select = $('#select-courses-xs');
-					}
+					var select = $('#select-courses');
 					select.val(result.data);					
 				} 
 			} 
@@ -127,18 +102,8 @@ function updateCoursesSelect() {
 }
 
 function assignLecturers() {
-	var selectL = null;
-	if($('.visible-xs').is(':hidden')) {
-		selectL = $('#select-lecturers');
-	} else {
-		selectL = $('#select-lecturers-xs');
-	}
-	var selectC = null;
-	if($('.visible-xs').is(':hidden')) {
-		selectC = $('#select-courses');
-	} else {
-		selectC = $('#select-courses-xs');
-	}	
+	var selectL = $('#select-lecturers');
+	var selectC = $('#select-courses');
 	if(selectL.val() == null || selectC.val() == null) {
 		alert("Please select the Lecturer(s) and Course(s) to make the assignment(s).");
 		return;
@@ -170,13 +135,7 @@ function assignLecturers() {
 }
 
 function unassignLecturers() {
-	var selectL = null;
-	if($('.visible-xs').is(':hidden')) {
-		selectL = $('#select-lecturers');
-	} else {
-		selectL = $('#select-lecturers-xs');
-	}
-		
+	var selectL = $('#select-lecturers');
 	if(selectL.val() == null) {
 		alert("Please select the Lecturer(s) remove assignments.");
 		return;

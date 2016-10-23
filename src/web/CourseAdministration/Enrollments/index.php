@@ -23,32 +23,26 @@
 	</div>
 	<div class="panel-body">
 		<div class="row">
-			<div class="col-sm-4 col-md-1 col-md-offset-3" id="label-container">
+			<div class="col-sm-1 col-md-1 col-sm-offset-2  col-md-offset-3" id="label-container">
 				<label for="select-course" class="control-label">Course:</label>
 			</div>
-			<div class="col-sm-8 col-md-5">
+			<div class="col-sm-7 col-md-5">
 				<select id="select-course" class="selectpicker form-control" data-live-search="true">
 				</select>
 			</div>
 		</div>
 		<div class="row form-group" id="buttons-container">
-			<div class="col-xs-4 col-md-2 col-md-offset-3">
-				<button type="button" data-toggle="modal" data-target="#confirm-remove"
-						class="button-remove btn btn-default glyphicon glyphicon-remove visible-md visible-lg form-control"> Remove</button>				 
-				<button type="button"  data-toggle="modal" data-target="#confirm-remove"
-						class="button-remove btn btn-default glyphicon glyphicon-remove visible-xs form-control button-xs"></button>
+			<div class="col-xs-10  col-md-2 col-lg-2 col-xs-offset-1 col-sm-offset-1 col-md-offset-3">
+				<button type="button" data-toggle="modal" data-target="#confirm-remove" id="button-remove" 
+						class="btn btn-default glyphicon glyphicon-remove form-control"> Remove</button>				 
 			</div>
-			<div class="col-xs-4 col-md-2">
-				<button type="button" data-toggle="modal" title="Enrollment" data-target="#popup-view_enrollment"
-						class="button-view btn btn-default glyphicon glyphicon-search visible-md visible-lg form-control"> View</button>
-				<button type="button" data-toggle="modal" title="Create Course" data-target="#popup-view_enrollment"
-						class="button-view btn btn-default glyphicon glyphicon-search visible-xs form-control button-xs"></button>						 
+			<div class="col-xs-10 col-md-2 col-lg-2 col-xs-offset-1 col-sm-offset-1 col-md-offset-0">
+				<button type="button" data-toggle="modal" title="Enrollment" data-target="#popup-view_enrollment"  id="button-view"
+						class="btn btn-default glyphicon glyphicon-search form-control"> View</button>					 
 			</div>
-			<div class="col-xs-4 col-md-2">
-				<button type="button" data-toggle="modal" title="Create Course" data-target="#popup-TODO"
-						class="button-upload btn btn-default glyphicon glyphicon-open visible-md visible-lg form-control"> Upload</button>
-				<button type="button" data-toggle="modal" title="Create Course" data-target="#popup-TODO"
-						class="button-upload btn btn-default glyphicon glyphicon-open visible-xs form-control button-xs"></button>
+			<div class="col-xs-10 col-md-2 col-lg-2 col-xs-offset-1 col-sm-offset-1 col-md-offset-0">
+				<button type="button" data-toggle="modal" title="Upload List" data-target="#popup-upload-file" id="button-upload "
+						class="btn btn-default glyphicon glyphicon-open form-control"> Upload</button>
 			</div>
 		</div>
 	</div>
@@ -101,6 +95,22 @@
 					<button id="button-cancel_confirmation" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 					<a class="btn btn-danger btn-ok">Proceed</a>
 			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="popup-upload-file" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Upload List</h4>
+			</div>
+	
+			<div class="modal-body">
+					<p>Please select a file containing a list of student IDs then press the Upload button to enroll students in the selecte course.</p>										
+					<input id="input-file-enrollment" name="file-input[]" type="file" class="file-loading" data-allowed-file-extensions='["json"]'>
+			</div>			
 		</div>
 	</div>
 </div>

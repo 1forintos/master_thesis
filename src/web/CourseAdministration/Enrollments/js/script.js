@@ -4,14 +4,29 @@ $(document).ready(function() {
 	]});
 	$('#confirm-remove').on('show.bs.modal', function(e) {
 		$(this).find('.btn-ok').on('click', function() {
-			removeEnrollment();
+			removeEnrollments();
 		});		
 	});	
-	$('.button-view').on( 'click', function () {
-		loadEnrollment();
+
+	$("#input-file-enrollment").fileinput({
+		uploadUrl: location.pathname + "/upload.php",
+		uploadExtraData: function() {
+			return {
+				"courseId": $('#select-course').val()
+			}
+		}
+	}).on('fileuploaded', function(event, data, id, index) {
+		if(data.response.result == "success") {
+			alert("Success");
+			location.reload();
+		}		
 	});
-	$('.button-upload').on( 'click', function () {
-		uploadEnrollment();
+
+	$('#button-view').on( 'click', function () {
+		loadEnrollments();
+	});
+	$('#button-upload').on( 'click', function () {
+		uploadEnrollments();
 	});
 	$('#select-course').selectpicker();
 	loadCoursesIntoSelect(showContent);	
@@ -54,17 +69,16 @@ function loadCoursesIntoSelect(_callback) {
 	});
 }
 
-function loadEnrollment() {
+function loadEnrollments() {
 	$.ajax({
 		type: "POST",
 		url: "/crm/db/db_methods.php",
 		data: {
 			data: $('#select-course').val(),
-			method: "loadEnrollment"
+			method: "loadEnrollments"
 		},
 		success: function(data) {
 			var results = $.parseJSON(data);
-			console.log(results);
 			if('status' in results) {
 				if(results.status == "success") {
 					studentTable.clear();
@@ -86,12 +100,12 @@ function loadEnrollment() {
 	});
 }
 
-function removeEnrollment() {
+function removeEnrollments() {
 	$.ajax({
 		type: "POST",
 		url: "/crm/db/db_methods.php",
 		data: {
-			method: "removeEnrollment",
+			method: "removeEnrollments",
 			data: $('#select-course').val()
 		},
 		success: function(result) {
