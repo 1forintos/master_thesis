@@ -1,3 +1,10 @@
+<?php
+	chdir(substr(__DIR__, 0, strpos(__DIR__, "/feedback/") + 9));
+	require_once "db/auth.php";
+	require_once "init.php";
+	authenticate();
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -5,8 +12,6 @@
 	<title>Comment</title>
 
 	<link rel="stylesheet" href="css/styles.css">
-
-
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
 		crossorigin="anonymous">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
@@ -24,8 +29,11 @@
 		<input id="input-comment" class="form-control input-lg" type="text" 
 			placeholder="Comment..." onkeypress="onkey(event)">
 	</div>
-	<div id="button-container">
-		<button id="button-send" type="button" class="btn btn-primary"><span id="button-text">Send</span></button>
+	<div class="button-container">
+		<button id="button-send" type="button" class="btn btn-primary"><span id="button-send-text">Send</span></button>
+	</div>
+	<div class="button-container">
+		<a href="/feedback/evaluate/"><button id="button-evaluation" type="button" class="btn btn-primary glyphicon "><span id="button-evaluate-text">Evaluation<span class="glyphicon-chevron-right"></span></span></button></a>
 	</div>
 </body>
 
