@@ -1,0 +1,30 @@
+html,
+body {
+	overflow: auto;
+}
+
+#comments {
+	margin-left: 0.2em;
+	margin-right: 0.2em;
+	height: 90%;
+	overflow-y: scroll;
+	border-top: 0.05em solid;
+	border-bottom: 0.05em solid;
+	border-color: #ddd;
+	border-radius: 0.2em;
+}
+
+#content {
+	height: 95vh;
+	margin-top: 1em;
+	width: auto;
+	font-size: 2em;
+}
+
+#content-panel {
+	height: 95%;
+}
+
+#content-body {
+	height: 99%;
+}
