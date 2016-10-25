@@ -1,5 +1,6 @@
 BEGIN;
 
+DROP TABLE IF EXISTS Lecture_Codes CASCADE;
 DROP TABLE IF EXISTS Feedback CASCADE;
 DROP TABLE IF EXISTS Question CASCADE;
 DROP TABLE IF EXISTS Comment CASCADE;
@@ -108,6 +109,13 @@ CREATE TABLE Comment (
   id serial PRIMARY KEY,
   course_id integer REFERENCES Course (id),
   comment VARCHAR(300) NOT NULL,
+  timestamp TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE Lecture_Codes (
+  id serial PRIMARY KEY,
+  course_id integer REFERENCES Course (id),
+  code VARCHAR(20) UNIQUE NOT NULL,
   timestamp TIMESTAMP DEFAULT now()
 );
 
