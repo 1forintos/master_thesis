@@ -182,13 +182,13 @@
 		$results[] = pg_prepare($GLOBALS['db'], "num_of_students", $sql);
 
 		$sql = "
-			INSERT INTO Lecture_Codes(course_id, code)
+			INSERT INTO Lecture_Code(course_id, code)
 			VALUES($1, $2)
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "insert_lecture_code", $sql);
 
 		$sql = "
-			DELETE FROM Lecture_Codes
+			DELETE FROM Lecture_Code
 			WHERE course_id = $1
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "delete_lecture_codes", $sql);

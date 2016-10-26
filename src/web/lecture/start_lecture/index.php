@@ -1,3 +1,8 @@
+<?php
+	require_once "../db/auth.php";
+	authenticate();
+?>
+
 <!DOCTYPE html>
 <html>
 

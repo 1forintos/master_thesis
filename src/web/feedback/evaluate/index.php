@@ -3,11 +3,18 @@
 	require_once "init.php";
 	require_once "db/auth.php";
 	require_once "db/db_methods.php";
+	
 	authenticate();
-	$courseId = 2;
+
+	$courseId = 0;
+	$questions = Array();
+	if(isset($_SESSION['course_id'])) {
+		$courseId = $_SESSION['course_id'];
+		$questions = loadQuestions($courseId);
+	}
+
 	$optionNum = 10;
 	$questionNum = 1;
-	$questions = loadQuestions($courseId);
 ?>
 
 <!DOCTYPE html>
@@ -53,9 +60,9 @@
 		<div id="button-container">
 			<div class="row">
 				<a href="/feedback/comment/" ><button id="button-comment" type="button" 
-					class="control-button col-xs-4 col-md-3 col-lg-3 btn btn-default glyphicon glyphicon-chevron-left">Comment</button></a>
+					class="control-button col-xs-4 col-md-3 col-lg-3 btn btn-default"><span class="button-text">Comment</span></button></a>
 				<div class="col-xs-4 col-md-6"></div>
-				<button id="button-send" type="button" class="control-button col-xs-4 col-md-3 col-lg-3 btn btn-default">Send</button>
+				<button id="button-submit" type="button" class="control-button col-xs-4 col-md-3 col-lg-3 btn btn-default"><span class="button-text">Submit</span></button>
 			</div>
 		</div>
 	</div>

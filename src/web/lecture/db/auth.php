@@ -6,6 +6,9 @@
 	session_start();
 
 	function login() {
+		if(!isset($_POST["email"]) || !isset($_POST["pass"])) {
+			logout();
+		}
 
 		$sql = "
 		  SELECT
@@ -15,7 +18,7 @@
 		  FROM Webuser
 		  WHERE email = $1
 		    AND password = $2
-			AND user_type = 'lecturer'
+				AND user_type = 'lecturer'
 		  GROUP BY id
 		";
 

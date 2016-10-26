@@ -6,15 +6,16 @@
 	session_start();
 
 	function login() {
-/*
+		if(!isset($_POST["code"])) {
+			logout();
+		}
+
 		$sql = "
 		  SELECT
-		    COUNT(*) AS user_found,
-		    user_type,
-		    id
-		  FROM Webuser
-		  WHERE email = $1
-		    AND password = $2
+		    COUNT(*) AS code_found,
+				course_id
+		  FROM Lecture_Code
+		  WHERE code = $1
 		  GROUP BY id
 		";
 
@@ -22,20 +23,18 @@
 		if(!$result) {
 		  error_log("Failed to prepare statement");
 		}
-		$result = pg_execute($GLOBALS['db'], "login_data", array($_POST["email"], $_POST["pass"]));
-		$user = pg_fetch_array($result);
+		$result = pg_execute($GLOBALS['db'], "login_data", array($_POST["code"]));
+		$data = pg_fetch_array($result);
 		pg_free_result($result);
-*/
-		//if($user['user_found']) {
+
+		if($data['code_found']) {
 			$_SESSION['authenticated'] = true;
-			$_SESSION['timeout'] = time();
-			//$_SESSION['user_type'] = $user['user_type'];
-			//$_SESSION['user_id'] = $user['id'];
-			$url = $GLOBALS['root'] . "comment";
+			$_SESSION['course_id'] = $data['course_id'];
+			$url = $GLOBALS['root'] . "evaluate";
 			navigateBrowser($url);
-		//} else {
-		//	logout();
-		//}
+		} else {
+			logout();
+		}
 	}
 
 	function logout() {
@@ -48,29 +47,9 @@
 		if(!isset($_SESSION['authenticated'])) {
 			logout();
 		}
-		if(!($_SESSION['authenticated'] && checkTimeout())) {
+		if(!($_SESSION['authenticated'])) {
 			logout();
 		}
-	}
-
-	function checkTimeout() {
-		# Check for session timeout, else initiliaze time
-		if (isset($_SESSION['timeout'])) {
-			# Check Session Time for expiry
-			$minutes = 30;
-			$seconds = 0;
-			if ($_SESSION['timeout'] + $minutes * 60 + $seconds < time()) {
-				return false;
-			} else {
-				# refresh
-				$_SESSION['timeout'] = time();
-			}
-		}
-		else {
-			# Initialize time
-			$_SESSION['timeout'] = time();
-		}
-		return true;
 	}
 
 	function navigateBrowser($url) {

@@ -1,20 +1,10 @@
 $(document).ready(function(){
   init();
-  $('#button-send').on('click', function() {
-    send();
+  $('#button-submit').on('click', function() {
+    submitEvaluation();
   });
   // iterate through questions
 
-  $( function() {
-    $(".slider").slider({
-      max: 10,
-      min: 0,
-      value: 50,
-      slide: function(event, ui) {
-        
-      }
-    });
-  });
   $('#content').show();
 });
 
@@ -41,83 +31,45 @@ function init() {
   }
 }
 
-function send() {
-  var commentInput = $("#input-comment");
-  var msg = commentInput.val();
-  if (!msg) {
-    alert("Write something first :)");
+function submitEvaluation() {
+  var questions = $('.selectpicker');
+  var evaluation = [];
+  for(var i = 0; i < questions.length; i++) {
+    var answer = {};
+    var elementId = questions[i].getAttribute('id');
+    var id = elementId.substring(elementId.indexOf("_") + 1);
+    answer.question_id = id;
+    answer.value = questions[i].value;
+    evaluation.push(answer); 
+  }
+
+  if(evaluation.length < 1) {
     return;
   }
 
-  commentInput.val("");
-  commentInput.focus();
-
-  if(!socket) {
-    alert("You are disconnected.");
-    return;
-  }
-
-  try {  
-    socket.send(msg);
-    log('Sent: ' + msg);
-  } catch (ex) {
-    log(ex);
-  }
-}
-
-function quit() {
-  if (socket != null) {
-    log("Goodbye!");
-    socket.close();
-    socket = null;
-  }
+  $.ajax({
+		type: "POST",
+		url: "/feedback/db/db_methods.php",
+		data: {
+			method: "submitEvaluation",
+			data: evaluation
+		},
+		success: function(result) {
+      if(result == "success") {
+        alert("Success");
+      } else {
+				var resultObj = $.parseJSON(result);
+				if('error' in resultObj) {
+          console.log(resultObj.error);
+					alert("Failed to submit evaluation.");
+				} else {
+					console.log("What the heck happened??");
+				}
+			}
+		}
+	});
 }
 
 function reconnect() {
-  quit();
   init();
-}
-
-function log(msg) {
-  $("#comments").append("<br>" + "[" + getDate() + "] " + msg);
-}
-
-function onkey(event) {
-  if (event.keyCode == 13) {
-    send();
-  }
-}
-
-function getDate() {
-  var now = new Date();
-
-  var year = now.getFullYear();
-  var month = now.getMonth() + 1; //January is 0!
-  var day = now.getDate();
-  var hour = now.getHours();
-  var min = now.getMinutes();
-  var sec = now.getSeconds();
-
-  if (month < 10) {
-    month = '0' + month;
-  }
-
-  if (day < 10) {
-    day = '0' + day;
-  }
-
-  if (hour < 10) {
-    hour = '0' + hour;
-  }
-
-  if (min < 10) {
-    min = '0' + min;
-  }
-
-  if (sec < 10) {
-    sec = '0' + sec;
-  }
-
-  now = /*year + '-' + month + '-' + day + ' ' + */hour + ':' + min + ':' + sec;
-  return now;
 }

@@ -29,9 +29,9 @@
 			            <tr>
 			            	<th width="5%">#</th>
 		                <th width="15%">E-mail</th>
-		                <th width="20%">Full Name</th>
+		                <th width="25%">Full Name</th>
 		                <th width="23%">Notes</th>
-		                <th>User Type</th>
+		                <th width="5%">User Type</th>
 		                <th width="5%">Last Modification</th>
 		                <th width="5%">Edit</th>
 		                <th width="5%">Delete</th>
