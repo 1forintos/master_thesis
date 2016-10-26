@@ -33,7 +33,7 @@
 		<button id="button-send" type="button" class="btn btn-primary"><span id="button-send-text">Send</span></button>
 	</div>
 	<div class="button-container">
-		<a href="/feedback/evaluate/"><button id="button-evaluation" type="button" class="btn btn-primary glyphicon "><span id="button-evaluate-text">Evaluation<span class="glyphicon-chevron-right"></span></span></button></a>
+		<a href="/feedback/evaluate/"><button id="button-evaluation" type="button" class="btn btn-primary glyphicon "><span id="button-evaluation-text">Evaluation<span class="glyphicon-chevron-right"></span></span></button></a>
 	</div>
 </body>
 

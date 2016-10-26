@@ -5,7 +5,7 @@ body {
 	background-color: #222;
 }
 
-#button-submit-text {
+#button-send-text {
 	margin: 1em;
 	font-size: 8em;
 }
@@ -14,7 +14,7 @@ body {
 	padding-bottom: 1em;
 }
 
-#button-evaluate-text {
+#button-evaluation-text {
 	margin: 0.5em;
 	font-size: 4em;
 }
