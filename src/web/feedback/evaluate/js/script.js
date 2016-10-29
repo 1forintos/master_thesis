@@ -8,18 +8,47 @@ $(document).ready(function(){
   $('#content').show();
 });
 
-var socket;
-
 function init() {
   var host = "ws://152.66.183.81:9000/echobot"; // SET THIS TO YOUR SERVER
   try {
     socket = new WebSocket(host);
-    //log('WebSocket - status ' + socket.readyState);
-    socket.onopen = function (msg) {
-      //log("Welcome - status " + this.readyState);
+      socket.onopen = function (msg) {
+        $.ajax({
+        type: "POST",
+        url: "/feedback/db/db_methods.php",
+        data: {
+          method: "getEntryCode"
+        },
+        success: function(result) {
+          var resultObj = $.parseJSON(result);
+          if(resultObj.status == "success") {
+            var data = {
+              action: "init",
+              code: resultObj.code
+            };
+            sendMsgViaSocket(data);
+          } else {
+            if('error' in resultObj) {
+              console.log(resultObj.error);
+            } else {
+              console.log("What the heck happened??");
+            }
+          }
+        }
+      });
     };
+
     socket.onmessage = function (msg) {
-      //log("Received: " + msg.data);
+      if(msg.data == "close") {
+        $.ajax({
+          type: "POST",
+          url: "/feedback/db/db_methods.php",
+          data: {
+            method: "logout"
+          }, 
+          succes: location.reload()
+        });
+      }
     };
     socket.onclose = function (msg) {
       //log("Disconnected - status " + this.readyState);
@@ -28,6 +57,22 @@ function init() {
   catch (ex) {
     //log(ex);
     console.log(ex);
+  }
+}
+
+
+function sendMsgViaSocket(msg) {
+  if(!socket) {
+    alert("You are disconnected.");
+    return;
+  }
+
+  try {  
+    socket.send(JSON.stringify(msg));
+    return true;
+  } catch (ex) {
+    console.log(ex);
+    return false;
   }
 }
 

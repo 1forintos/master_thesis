@@ -26,7 +26,7 @@ function stopLecture() {
 		success: function(result) {
 			if(result == "success") {
 				var data = {
-					action: "stopLecture",
+					action: "stop_lecture",
 					courseId: $('#select-course').val()
 				};
 				sendMsgViaSocket(data);
@@ -61,11 +61,31 @@ function startLecture() {
         download.get(0).click();
         download.remove();
 
-				var data = {
-					action: "startLecture",
-					courseId: $('#select-course').val()
-				};
-				sendMsgViaSocket(data);
+				$.ajax({
+        type: "POST",
+        url: "/lecture/db/db_methods.php",
+        data: {
+          method: "getUserId"
+        },
+        success: function(result) {
+          var resultObj = $.parseJSON(result);
+          if(resultObj.status == "success") {
+							var data = {
+							action: "start_lecture",
+              lecturerId: resultObj.userId,
+							courseId: $('#select-course').val()
+						};
+						sendMsgViaSocket(data);
+          } else {
+            if('error' in resultObj) {
+              alert("Error: " + resultObj.error);
+            } else {
+              console.log("What the heck happened??");
+            }
+          } 
+        }    
+	    });
+
 			} else {
 				if('error' in resultObj) {
 					alert("Error: " + resultObj.error);
@@ -75,6 +95,33 @@ function startLecture() {
 			} 
 		}    
 	});
+}
+
+
+function updateLecturerSocket() {
+  $.ajax({
+    type: "POST",
+    url: "/lecture/db/db_methods.php",
+    data: {
+      method: "getUserId"
+    },
+    success: function(result) {
+      var resultObj = $.parseJSON(result);
+      if(resultObj.status == "success") {
+        var data = {
+          action: "update_lecturer_socket",
+          lecturerId: resultObj.userId
+        };
+        sendMsgViaSocket(data);
+      } else {
+        if('error' in resultObj) {
+          alert("Error: " + resultObj.error);
+        } else {
+          console.log("What the heck happened??");
+        }
+      } 
+    }    
+  });
 }
 
 function loadCoursesIntoSelect(_callback) {
@@ -115,6 +162,7 @@ function init() {
   try {
     socket = new WebSocket(host);
     socket.onopen = function (msg) {
+			updateLecturerSocket();
     };
     socket.onmessage = function (msg) {
     };

@@ -12,7 +12,21 @@
 			startLecture($_POST['data']);
 		} else if($_POST['method'] == "stopLecture") {
 			deleteLectureCodes($_POST['data']);
+		} else if($_POST['method'] == "getUserId") {
+			getUserId();
 		} 
+	}
+
+	function getUserId() {
+		if(!isset($_SESSION['user_id'])) {
+			error_log("User ID not found in SESSION.");
+			throwError("Something went wrong");
+		}
+		$data = array(
+			"status" => "success",
+			"userId" => $_SESSION['user_id']
+		);
+		echo json_encode($data);
 	}
 
 	function loadCoursesOfLecturer() {

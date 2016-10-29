@@ -47,7 +47,6 @@
 	}
 
 	function authenticate() {
-		error_log(print_r($_SESSION['authenticated'], true));
 		if(!isset($_SESSION['authenticated'])) {
 			logout();
 		}
@@ -60,7 +59,7 @@
 		# Check for session timeout, else initiliaze time
 		if (isset($_SESSION['timeout'])) {
 			# Check Session Time for expiry
-			$minutes = 30;
+			$minutes = 150;
 			$seconds = 0;
 			if ($_SESSION['timeout'] + $minutes * 60 + $seconds < time()) {
 				return false;

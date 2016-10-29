@@ -8,9 +8,7 @@ function init() {
     log('WebSocket - status ' + socket.readyState);
     socket.onopen = function (msg) {
       log("Welcome - status " + this.readyState);
-			var data = {
-				action: "update"
-			};
+      updateLecturerSocket();
     };
     socket.onmessage = function (msg) {
       log("Received: " + msg.data);
@@ -21,6 +19,47 @@ function init() {
   }
   catch (ex) {
     log(ex);
+  }
+}
+
+function updateLecturerSocket() {
+  $.ajax({
+    type: "POST",
+    url: "/lecture/db/db_methods.php",
+    data: {
+      method: "getUserId"
+    },
+    success: function(result) {
+      var resultObj = $.parseJSON(result);
+      if(resultObj.status == "success") {
+        var data = {
+          action: "update_lecturer_socket",
+          lecturerId: resultObj.userId
+        };
+        sendMsgViaSocket(data);
+      } else {
+        if('error' in resultObj) {
+          alert("Error: " + resultObj.error);
+        } else {
+          console.log("What the heck happened??");
+        }
+      } 
+    }    
+  });
+}
+
+function sendMsgViaSocket(msg) {
+  if(!socket) {
+    alert("You are disconnected.");
+    return;
+  }
+
+  try {  
+    socket.send(JSON.stringify(msg));
+    return true;
+  } catch (ex) {
+    console.log(ex);
+    return false;
   }
 }
 

@@ -13,35 +13,43 @@ function init() {
   var host = "ws://152.66.183.81:9000/echobot"; // SET THIS TO YOUR SERVER
   try {
     socket = new WebSocket(host);
-    //log('WebSocket - status ' + socket.readyState);
-    socket.onopen = function (msg) {
-      $.ajax({
-      type: "POST",
-      url: "/feedback/db/db_methods.php",
-      data: {
-        method: "getEntryCode"
-      },
-      success: function(result) {
-        var resultObj = $.parseJSON(result);
-        if(resultObj.status == "success") {
-          var data = {
-            action: "init",
-            code: resultObj.code
-          };
-          sendMsgViaSocket(data);
-        } else {
-          if('error' in resultObj) {
-            console.log(resultObj.error);
+      socket.onopen = function (msg) {
+        $.ajax({
+        type: "POST",
+        url: "/feedback/db/db_methods.php",
+        data: {
+          method: "getEntryCode"
+        },
+        success: function(result) {
+          var resultObj = $.parseJSON(result);
+          if(resultObj.status == "success") {
+            var data = {
+              action: "init",
+              code: resultObj.code
+            };
+            sendMsgViaSocket(data);
           } else {
-            console.log("What the heck happened??");
+            if('error' in resultObj) {
+              console.log(resultObj.error);
+            } else {
+              console.log("What the heck happened??");
+            }
           }
         }
-      }
-    });
-     
+      });
     };
+
     socket.onmessage = function (msg) {
-      //log("Received: " + msg.data);
+      if(msg.data == "close") {
+        $.ajax({
+          type: "POST",
+          url: "/feedback/db/db_methods.php",
+          data: {
+            method: "logout"
+          }, 
+          succes: location.reload()
+        });
+      }
     };
     socket.onclose = function (msg) {
       //log("Disconnected - status " + this.readyState);
@@ -84,10 +92,11 @@ function sendComment() {
   commentInput.val("");
   var commentData = {
     action: "comment",
-    text: commentText
+    text: commentText,
+    code: entryCode
   };
   if(sendMsgViaSocket(commentData)) {
-    saveComment(commentData);
+    saveComment(commentText);
   }
 }
 

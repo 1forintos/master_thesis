@@ -12,6 +12,8 @@
 			submitComment($_POST['data']);
 		} else if($_POST['method'] == "getEntryCode") {
 			getEntryCode();
+		} if($_POST['method'] == "logout") {
+			logout();
 		}
 	}
 
