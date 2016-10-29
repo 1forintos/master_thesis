@@ -8,6 +8,10 @@
 	if(isset($_POST['method'])) {
 		if($_POST['method'] == "submitEvaluation") {
 			submitEvaluation($_POST['data']);
+		} else if($_POST['method'] == "submitComment") {
+			submitComment($_POST['data']);
+		} else if($_POST['method'] == "getEntryCode") {
+			getEntryCode();
 		}
 	}
 
@@ -28,6 +32,22 @@
 		echo "success";
 	}
 
+	function submitComment($comment) {
+		if(!$comment) {
+			throwError("No data submited.");
+		}
+		$courseId = $_SESSION['course_id']; 
+
+		$result = pg_execute($GLOBALS['db'], "submit_comment", array(
+			$courseId, $comment	
+		));
+		if(!$result) {
+			throwError("Failed to submit comment. [C_ID: " . $courseId . "]");
+		}
+
+		echo "success";
+	}
+
 	function loadQuestions($courseId) {
 		$results = pg_execute($GLOBALS['db'], "load_questions", array($courseId));
 
@@ -41,6 +61,17 @@
 
 		pg_free_result($results);
 		return $data;
+	}
+
+	function getEntryCode() {
+		if(!isset($_SESSION['code'])) {
+			throwError("Entry code not set.");
+		}
+		$data = array(
+			"status" => "success",
+			"code" => $_SESSION['code']
+		);
+		echo json_encode($data);
 	}
 
 	function throwError($msg) {
@@ -68,6 +99,13 @@
 			VALUES($1, $2)
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "submit_evaluation", $sql);
+
+		# COMMENT
+		$sql = "
+			INSERT INTO Comment(course_id, comment)
+			VALUES($1, $2)
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "submit_comment", $sql);
 
 		foreach($results as $result) {
 			if(!$result) {

@@ -8,6 +8,9 @@ function init() {
     log('WebSocket - status ' + socket.readyState);
     socket.onopen = function (msg) {
       log("Welcome - status " + this.readyState);
+			var data = {
+				action: "update"
+			};
     };
     socket.onmessage = function (msg) {
       log("Received: " + msg.data);
@@ -19,7 +22,6 @@ function init() {
   catch (ex) {
     log(ex);
   }
-  $("#input-comment").focus();
 }
 
 function quit() {

@@ -30,6 +30,7 @@
 		if($data['code_found']) {
 			$_SESSION['authenticated'] = true;
 			$_SESSION['course_id'] = $data['course_id'];
+			$_SESSION['code'] = $_POST["code"];
 			$url = $GLOBALS['root'] . "evaluate";
 			navigateBrowser($url);
 		} else {
@@ -47,9 +48,29 @@
 		if(!isset($_SESSION['authenticated'])) {
 			logout();
 		}
-		if(!($_SESSION['authenticated'])) {
+		if(!($_SESSION['authenticated'] && checkTimeout())) {
 			logout();
 		}
+	}
+
+	function checkTimeout() {
+		# Check for session timeout, else initiliaze time
+		if (isset($_SESSION['timeout'])) {
+			# Check Session Time for expiry
+			$minutes = 150;
+			$seconds = 0;
+			if ($_SESSION['timeout'] + $minutes * 60 + $seconds < time()) {
+				return false;
+			} else {
+				# refresh
+				$_SESSION['timeout'] = time();
+			}
+		}
+		else {
+			# Initialize time
+			$_SESSION['timeout'] = time();
+		}
+		return true;
 	}
 
 	function navigateBrowser($url) {

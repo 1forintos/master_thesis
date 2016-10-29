@@ -1,10 +1,12 @@
 $(document).ready(function(){
+  retrieveEntryCode();
   init();
   $('#button-send').on('click', function() {
-    send();
+    sendComment();
   });
 });
 
+var entryCode;
 var socket;
 
 function init() {
@@ -13,7 +15,30 @@ function init() {
     socket = new WebSocket(host);
     //log('WebSocket - status ' + socket.readyState);
     socket.onopen = function (msg) {
-      //log("Welcome - status " + this.readyState);
+      $.ajax({
+      type: "POST",
+      url: "/feedback/db/db_methods.php",
+      data: {
+        method: "getEntryCode"
+      },
+      success: function(result) {
+        var resultObj = $.parseJSON(result);
+        if(resultObj.status == "success") {
+          var data = {
+            action: "init",
+            code: resultObj.code
+          };
+          sendMsgViaSocket(data);
+        } else {
+          if('error' in resultObj) {
+            console.log(resultObj.error);
+          } else {
+            console.log("What the heck happened??");
+          }
+        }
+      }
+    });
+     
     };
     socket.onmessage = function (msg) {
       //log("Received: " + msg.data);
@@ -28,33 +53,92 @@ function init() {
   }
 }
 
-function send() {
-  var commentInput = $("#input-comment");
-  var msg = commentInput.val();
-  if (!msg) {
-    alert("Write something first :)");
-    return;
-  }
+function setEntryCode(code) {
+  entryCode = code;
+}
 
-  commentInput.val("");
-  commentInput.focus();
-
+function sendMsgViaSocket(msg) {
   if(!socket) {
     alert("You are disconnected.");
     return;
   }
 
   try {  
-    socket.send(msg);
-    log('Sent: ' + msg);
+    socket.send(JSON.stringify(msg));
+    return true;
   } catch (ex) {
-    log(ex);
+    console.log(ex);
+    return false;
   }
+}
+
+function sendComment() {
+  var commentInput = $("#input-comment");
+  var commentText = commentInput.val();
+  commentInput.focus();
+  if (!commentText) {
+    alert("That's not much of a comment now, is it? :)");
+    return;
+  }
+
+  commentInput.val("");
+  var commentData = {
+    action: "comment",
+    text: commentText
+  };
+  if(sendMsgViaSocket(commentData)) {
+    saveComment(commentData);
+  }
+}
+
+function retrieveEntryCode() {
+  $.ajax({
+		type: "POST",
+		url: "/feedback/db/db_methods.php",
+		data: {
+			method: "getEntryCode"
+		},
+		success: function(result) {
+      var resultObj = $.parseJSON(result);
+      if(resultObj.status == "success") {
+        setEntryCode(resultObj.code);
+      } else {
+				if('error' in resultObj) {
+          console.log(resultObj.error);
+				} else {
+					console.log("What the heck happened??");
+				}
+			}
+		}
+	});
+}
+
+function saveComment(comment) {
+  $.ajax({
+		type: "POST",
+		url: "/feedback/db/db_methods.php",
+		data: {
+			method: "submitComment",
+			data: comment
+		},
+		success: function(result) {
+      if(result == "success") {
+        alert("Success");
+      } else {
+				var resultObj = $.parseJSON(result);
+				if('error' in resultObj) {
+          console.log(resultObj.error);
+					alert("Failed to save comment.");
+				} else {
+					console.log("What the heck happened??");
+				}
+			}
+		}
+	});
 }
 
 function quit() {
   if (socket != null) {
-    log("Goodbye!");
     socket.close();
     socket = null;
   }
@@ -65,13 +149,9 @@ function reconnect() {
   init();
 }
 
-function log(msg) {
-  $("#comments").append("<br>" + "[" + getDate() + "] " + msg);
-}
-
 function onkey(event) {
   if (event.keyCode == 13) {
-    send();
+    sendComment();
   }
 }
 

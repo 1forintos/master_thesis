@@ -8,6 +8,7 @@ $(document).ready(function() {
   });
 
 	loadCoursesIntoSelect(showContent);
+	init();
 });
 
 function showContent() {
@@ -24,6 +25,11 @@ function stopLecture() {
 		},
 		success: function(result) {
 			if(result == "success") {
+				var data = {
+					action: "stopLecture",
+					courseId: $('#select-course').val()
+				};
+				sendMsgViaSocket(data);
 				alert("Success.");
 			} else {
         var resultObj = $.parseJSON(result);
@@ -36,7 +42,6 @@ function stopLecture() {
 		}    
 	});
 }
-
 
 function startLecture() {
   $.ajax({
@@ -55,6 +60,12 @@ function startLecture() {
           .appendTo('body');
         download.get(0).click();
         download.remove();
+
+				var data = {
+					action: "startLecture",
+					courseId: $('#select-course').val()
+				};
+				sendMsgViaSocket(data);
 			} else {
 				if('error' in resultObj) {
 					alert("Error: " + resultObj.error);
@@ -95,4 +106,37 @@ function loadCoursesIntoSelect(_callback) {
 			console.log(result);
 		}
 	});
+}
+
+var socket;
+
+function init() {
+  var host = "ws://152.66.183.81:9000/echobot"; // SET THIS TO YOUR SERVER
+  try {
+    socket = new WebSocket(host);
+    socket.onopen = function (msg) {
+    };
+    socket.onmessage = function (msg) {
+    };
+    socket.onclose = function (msg) {
+    };
+  }
+  catch (ex) {
+    log(ex);
+  }
+}
+
+function sendMsgViaSocket(msg) {
+  if(!socket) {
+    alert("You are disconnected.");
+    return;
+  }
+
+  try {  
+    socket.send(JSON.stringify(msg));
+    return true;
+  } catch (ex) {
+    console.log(ex);
+    return false;
+  }
 }
