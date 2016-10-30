@@ -10,7 +10,7 @@
 	    <h3 class="panel-title">Home</h3>
 	  </div>
 	  <div class="panel-body">
-	    Welcome to the Storage Manager! Please use the navigation bar to find the desired functionality.
+	    Welcome to the TODO Management System! Please use the navigation bar to find the desired functionality.
 	  </div>
 	</div>
 </div>

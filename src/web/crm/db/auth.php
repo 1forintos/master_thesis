@@ -57,7 +57,7 @@
 		# Check for session timeout, else initiliaze time
 		if (isset($_SESSION['timeout'])) {
 			# Check Session Time for expiry
-			$minutes = 30;
+			$minutes = 150;
 			$seconds = 0;
 			if ($_SESSION['timeout'] + $minutes * 60 + $seconds < time()) {
 				return false;

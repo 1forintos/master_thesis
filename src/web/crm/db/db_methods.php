@@ -3,7 +3,6 @@
 	require_once "auth.php";
 
 	prepareStatements();
-
 	authenticate();
 
 	if(isset($_POST['method'])) {
@@ -31,14 +30,26 @@
 			loadEnrollments($_POST['data']);
 		} else if($_POST['method'] == "removeEnrollments") {
 			removeEnrollments($_POST['data']);
-		} 
+		} else if($_POST['method'] == "loadQuestionsForCourse") {
+			loadQuestionsForCourse($_POST['data']);
+		} else if($_POST['method'] == "addNewQuestion") {
+			addNewQuestion($_POST['data']);
+		} else if($_POST['method'] == "editQuestion") {
+			editQuestion($_POST['data']);
+		} else if($_POST['method'] == "removeQuestion") {
+			removeQuestion($_POST['data']);
+		}
 	}
 
 	function loadData($info) {
 		if($info == "user_accounts") {
 			$results = pg_execute($GLOBALS['db'], "load_users", array());
 		} else if($info == "courses") {
-			$results = pg_execute($GLOBALS['db'], "load_courses", array());			
+			if($_SESSION['user_type'] == 'lecturer') {
+				$results = pg_execute($GLOBALS['db'], "load_courses_of_lecturer", array($_SESSION['user_id']));			
+			} else {
+				$results = pg_execute($GLOBALS['db'], "load_courses", array());
+			}
 		} else if($info == "lecturers") {
 			$results = pg_execute($GLOBALS['db'], "load_lecturers", array());			
 		} 
@@ -58,6 +69,92 @@
 			"data" => $data
 		);
 		echo json_encode($result);
+	}
+
+	# QUESTIONS
+
+	function loadQuestionsForCourse($courseId) {
+		if(!$courseId) {
+			throwError("No course selected.");
+		}
+		
+		$results = pg_execute($GLOBALS['db'], "load_questions_for_course", array($courseId));
+		if(!$results) {
+			throwError("Failed to load questions for course. [ID: " . $courseId . "]");
+		}
+
+		$data = array();
+		while($row = pg_fetch_array($results)) {
+			$data[] = array();
+			foreach($row as $key => $value) {
+				$data[count($data) - 1][$key] = utf8_encode($value);
+			}
+		}
+
+		pg_free_result($results);
+
+		$result = array(
+			"status" => "success",
+			"data" => $data
+		);
+		echo json_encode($result);
+	}
+
+	function addNewQuestion($data) {
+		if(!$data['course_id']) {
+			throwError("No course selected.");
+		}
+		if($data['question_text'] == "") {
+			throwError("Missing question text.");
+		}
+
+		$result = pg_execute($GLOBALS['db'], "insert_question", array(
+			$data['course_id'],
+			$data['question_text']
+		));
+
+		if(!$result) {
+			pg_free_result($result);
+			throwError("Failed to add question.");
+		}
+
+		echo "success";
+	}
+
+	function editQuestion($data) {
+		if(!$data['course_id']) {
+			throwError("No course selected.");
+		}
+		if($data['question_text'] == "") {
+			throwError("Missing question text.");
+		}
+
+		$result = pg_execute($GLOBALS['db'], "edit_question", array(
+			$data['question_text'],
+			$data['id'],
+			$data['course_id']
+		));
+
+		if(!$result) {
+			pg_free_result($result);
+			throwError("Failed to edit question.");
+		}
+
+		echo "success";
+	}
+
+	function removeQuestion($question) {
+		$result = pg_execute($GLOBALS['db'], "remove_question", array(
+			$question['id'],
+			$question['course_id']
+		));
+
+		if(!$result) {
+			pg_free_result($result);
+			throwError("Failed to delete question.");
+		}
+
+		echo "success";
 	}
 
 	# USER ACCOUNT
@@ -473,6 +570,15 @@
 		$results[] = pg_prepare($GLOBALS['db'], "load_courses", $sql);
 
 		$sql = "
+			SELECT C.id, C.title, C.course_code
+			FROM Course as C
+			JOIN Lecturer as L 
+				on C.id = L.course_id 
+			WHERE L.user_id = $1
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "load_courses_of_lecturer", $sql);
+
+		$sql = "
 			SELECT COUNT(*) AS course_exists
 			FROM Course
 			WHERE id = $1
@@ -546,7 +652,7 @@
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "unassign_lecturer", $sql);
 
-		/* enrollments */
+		// ENROLLMENTS
 		$sql = "
 			SELECT id, student_id
 			FROM Enrollment
@@ -573,6 +679,38 @@
 			VALUES($1, $2)
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "enroll_student", $sql);
+
+		# QUESTIONS 
+		$sql = "
+			SELECT id, question_text, last_modification
+			FROM Question
+			WHERE course_id = $1
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "load_questions_for_course", $sql);
+
+		$sql = "
+			INSERT INTO Question(course_id, question_text)
+			VALUES($1, $2)
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "insert_question", $sql);
+
+		$sql = "
+			UPDATE Question
+			SET
+				question_text = $1,
+				last_modification = now()
+			WHERE id = $2
+				AND course_id = $3
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "edit_question", $sql);
+
+		$sql = "
+			DELETE FROM Question
+			WHERE id = $1
+				AND course_id = $2
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "remove_question", $sql);
+
 
 		foreach($results as $result) {
 			if(!$result) {

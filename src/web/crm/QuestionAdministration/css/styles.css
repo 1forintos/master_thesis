@@ -1,0 +1,39 @@
+/* style rules added here will be loaded */
+
+table {
+	max-width: none;
+}
+
+
+.popup-row {
+	margin-bottom: 0.5em;
+}
+
+.danger {
+	border-color: red;	
+}
+
+#content {
+	margin-top: 2em;
+}
+
+#button-add-container {
+	text-align: right;
+	margin-top: 1em;
+}
+
+.h-divider{
+	margin-top:2em;
+	margin-bottom:2em;
+	height:1px;
+	width:100%;
+
+	margin-bottom:2em;
+	height:1px;
+	width:100%;
+	border-top:1px solid #ccc;
+}
+
+#label-select-course {
+	margin-top: 0.5em;
+}

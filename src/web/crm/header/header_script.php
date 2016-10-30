@@ -3,6 +3,7 @@
 	require_once "db/auth.php";
 	require_once "init.php";
 
+	authenticate();
 	if(isset($_POST['value'])) {
 		if($_POST['value'] == 'logout') {
 			logout();
@@ -12,8 +13,6 @@
 				echo $url;
 			}
 		}
-	} else {
-		authenticate();
 	}
 
 	function console_log( $data ){
