@@ -37,7 +37,7 @@
 		</div>
 		<hr>
 		<div class="row">
-			<button id="button-stop-lecture" type="button" class="control-button col-xs-5 col-md-3 btn btn-default"><span class="button-text">Stop</span></button>
+			<button id="button-stop-lecture" type="button" class="control-button col-xs-5 col-md-3 btn btn-default"><span class="button-text">End</span></button>
 			<div class="col-xs-2 col-md-6"></div>
 			<button id="button-start-lecture" type="button" class="control-button col-xs-5 col-md-3 btn btn-default"><span class="button-text">Start</span></button>
 		</div>

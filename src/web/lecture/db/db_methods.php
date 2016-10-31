@@ -11,7 +11,7 @@
 		} else if($_POST['method'] == "startLecture") {
 			startLecture($_POST['data']);
 		} else if($_POST['method'] == "stopLecture") {
-			deleteLectureCodes($_POST['data']);
+			stopLecture($_POST['data']);
 		} else if($_POST['method'] == "getUserId") {
 			getUserId();
 		} 
@@ -81,6 +81,20 @@
 			throwError("Course not found. [" . $courseId . "]");
 		}
 
+		$result = pg_execute($GLOBALS['db'], "lecture_started", array($courseId));
+		$result = pg_fetch_array($result);
+		if($result['lecture_started']) {
+			throwError("A lecture is already in progress from the selected course.");
+		}
+
+		$title = "";
+		$result = pg_execute($GLOBALS['db'], "start_lecture", array($courseId, $title));
+		if(!$result) {
+			throwError("Failed to start lecture for course. [ID: " . $courseId . "]");
+		}
+		$lectureId = getIdOfLectureInProgress($courseId);
+		initAttendanceForNewLectureOfCourse($lectureId, $courseId);
+
 		$codes = generateLectureCodes($courseId);
 		$result = array(
 			"status" => "success",
@@ -89,21 +103,63 @@
 		echo json_encode($result);
 	}
 
-	function generateLectureCodes($courseId) {
-		$result = pg_execute($GLOBALS['db'], "num_of_students", array($courseId));
-		$result = pg_fetch_array($result);
+	function stopLecture($courseId) {
+		if(!courseExists($courseId)) {
+			throwError("Course not found. [" . $courseId . "]");
+		}
 
-		$numToGen = $result['num_of_students'];
+		
+		$lectureId = getIdOfLectureInProgress($courseId);
+		if(!$lectureId) {
+			throwError("There is no lecture in progress from the selected course.");
+		} 
+
+		deleteLectureCodes($lectureId);
+		$result = pg_execute($GLOBALS['db'], "end_lecture", array($lectureId));
+		if(!$result) {
+			throwError("Failed to stop lecture for course.");
+		}
+
+		echo "success";
+	}
+
+	function initAttendanceForNewLectureOfCourse($lectureId, $courseId) {
+		$result = pg_execute($GLOBALS['db'], "get_student_ids", array($courseId));
+		$studentIds = pg_fetch_all($result);
+		
+
+		foreach($studentIds as $studentId) {
+			$result = pg_execute($GLOBALS['db'], "insert_attendance", array(
+				$lectureId, 
+				$studentId['student_id']
+			));
+			if(!$result) {
+				throwError("Failed to init attendance.");
+			}
+		}
+	}
+
+	function getIdOfLectureInProgress($courseId) {
+		$result = pg_execute($GLOBALS['db'], "get_id_of_lecture_in_progress", array($courseId));
+		$result = pg_fetch_array($result);
+		return $result['id'];
+	}
+
+	function generateLectureCodes($courseId) {
+		$result = pg_execute($GLOBALS['db'], "get_student_ids", array($courseId));
+		$studentIds = pg_fetch_all($result);
+
+		$numToGen = count($studentIds);
 		if(!$numToGen) {
 			return Array();
 		}
 		
 		$lengthOfCodes = 5;
 		$codes = generateRandomStrings($numToGen, $lengthOfCodes);
-
-		foreach($codes as $code) {
-			$result = pg_execute($GLOBALS['db'], "insert_lecture_code", array($courseId, $code));
-
+		$lectureId = getIdOfLectureInProgress($courseId);
+		$studentsData = array_combine($codes, $studentIds);
+		foreach($studentsData as $code => $studentId) {
+			$result = pg_execute($GLOBALS['db'], "insert_lecture_code", array($lectureId, $code, $studentId['student_id']));
 			if(!$result) { 
 				throwError("Failed to insert codes.");
 			}
@@ -138,14 +194,12 @@
 		return $string;
 	}
 
-	function deleteLectureCodes($courseId) {
-		$result = pg_execute($GLOBALS['db'], "delete_lecture_codes", array($courseId));
+	function deleteLectureCodes($lectureId) {
+		$result = pg_execute($GLOBALS['db'], "delete_lecture_codes", array($lectureId));
 
 		if(!$result) { 
 			throwError("Failed to delete lecture codes.");
 		}
-
-		echo "success";
 	}
 
 	function throwError($msg) {
@@ -189,6 +243,32 @@
 		$results[] = pg_prepare($GLOBALS['db'], "load_courses_of_lecturer", $sql);
 
 		$sql = "
+			SELECT 
+				COUNT(*) as lecture_started,
+				id 
+			FROM Lecture
+			WHERE id = $1
+				AND status = 'in_progress'
+			GROUP BY id
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "lecture_started", $sql);
+
+		$sql = "
+			INSERT INTO Lecture(course_id, title, start_date)
+			VALUES($1, $2, now())
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "start_lecture", $sql);
+
+		$sql = "
+			UPDATE Lecture
+			SET 
+				end_date = now(),
+				status = 'finished'
+			WHERE id = $1
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "end_lecture", $sql);
+
+		$sql = "
 			SELECT COUNT(*) AS num_of_students
 			FROM Enrollment
 			WHERE course_id = $1
@@ -196,17 +276,37 @@
 		$results[] = pg_prepare($GLOBALS['db'], "num_of_students", $sql);
 
 		$sql = "
-			INSERT INTO Lecture_Code(course_id, code)
-			VALUES($1, $2)
+			SELECT student_id
+			FROM Enrollment
+			WHERE course_id = $1
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "get_student_ids", $sql);
+
+		$sql = "
+			SELECT id
+			FROM Lecture
+			WHERE course_id = $1
+				AND status = 'in_progress'
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "get_id_of_lecture_in_progress", $sql);
+
+		$sql = "
+			INSERT INTO Lecture_Code(lecture_id, code, student_id)
+			VALUES($1, $2, $3)
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "insert_lecture_code", $sql);
 
 		$sql = "
 			DELETE FROM Lecture_Code
-			WHERE course_id = $1
+			WHERE lecture_id = $1
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "delete_lecture_codes", $sql);
 
+		$sql = "
+			INSERT INTO Attendance(lecture_id, student_id, attended)
+			VALUES($1, $2, FALSE)
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "insert_attendance", $sql);
 
 		foreach($results as $result) {
 			if(!$result) {

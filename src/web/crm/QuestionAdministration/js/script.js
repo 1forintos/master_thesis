@@ -1,13 +1,13 @@
 $(document).ready(function() {
 	var table = $('#table-questions').DataTable({
 		"columnDefs": [ {
-				"targets": -2,
-				"data": null,
-				"defaultContent": '<button class="button-edit btn btn-default glyphicon glyphicon-pencil" data-toggle="modal" data-target="#popup-edit"></button>'
+			"targets": -2,
+			"data": null,
+			"defaultContent": '<button class="button-edit btn btn-default glyphicon glyphicon-pencil" data-toggle="modal" data-target="#popup-edit"></button>'
 		}, {
-				"targets": -1,
-				"data": null,
-				"defaultContent": '<button class="button-remove btn btn-default glyphicon glyphicon-remove"></button>'
+			"targets": -1,
+			"data": null,
+			"defaultContent": '<button class="button-remove btn btn-default glyphicon glyphicon-remove"></button>'
 		}
 	]});
 

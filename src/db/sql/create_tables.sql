@@ -1,5 +1,7 @@
 BEGIN;
 
+DROP TABLE IF EXISTS Attendance CASCADE;
+DROP TABLE IF EXISTS Lecture CASCADE;
 DROP TABLE IF EXISTS Lecture_Code CASCADE;
 DROP TABLE IF EXISTS Feedback CASCADE;
 DROP TABLE IF EXISTS Question CASCADE;
@@ -38,6 +40,15 @@ BEGIN
 END
 $$;
 
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'lecture_status') THEN
+    DROP TYPE lecture_status;
+  END IF;
+  CREATE TYPE lecture_status AS ENUM ('before_start', 'in_progress', 'finished');
+END
+$$;
+
 CREATE TABLE Webuser (
   id serial PRIMARY KEY,
   email varchar(100) UNIQUE NOT NULL,
@@ -68,7 +79,7 @@ CREATE TABLE Lecturer (
 CREATE TABLE Enrollment (
   id serial PRIMARY KEY,
   course_id integer REFERENCES Course (id) NOT NULL,
-  student_id varchar(100) NOT NULL,
+  student_id varchar(100) UNIQUE NOT NULL,
   last_modification TIMESTAMP DEFAULT now()
 );
 
@@ -107,16 +118,33 @@ CREATE TABLE Feedback (
 
 CREATE TABLE Comment (
   id serial PRIMARY KEY,
-  course_id integer REFERENCES Course (id),
+  lecture_id integer REFERENCES Lecture (id),
   comment VARCHAR(300) NOT NULL,
   timestamp TIMESTAMP DEFAULT now()
 );
 
-CREATE TABLE Lecture_Code (
+CREATE TABLE Lecture (
   id serial PRIMARY KEY,
   course_id integer REFERENCES Course (id),
+  title VARCHAR(100),
+  status lecture_status NOT NULL DEFAULT 'in_progress',
+  start_date TIMESTAMP,
+  end_date TIMESTAMP
+);
+
+CREATE TABLE Lecture_Code (
+  id serial PRIMARY KEY,
+  lecture_id integer REFERENCES Lecture (id),
   code VARCHAR(20) UNIQUE NOT NULL,
+  student_id VARCHAR(100) REFERENCES Enrollment (student_id),
   timestamp TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE Attendance (
+  id serial PRIMARY KEY,
+  lecture_id integer REFERENCES Lecture (id),
+  student_id VARCHAR(100) REFERENCES Enrollment (student_id),
+  attended BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 /* add sample users */

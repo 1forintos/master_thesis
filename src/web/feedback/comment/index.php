@@ -2,7 +2,9 @@
 	chdir(substr(__DIR__, 0, strpos(__DIR__, "/feedback/") + 9));
 	require_once "db/auth.php";
 	require_once "init.php";
+	require_once "db/db_methods.php";
 	authenticate();
+	toggleAttendance();
 ?>
 
 <!DOCTYPE html>

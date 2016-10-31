@@ -5,6 +5,7 @@
 	require_once "db/db_methods.php";
 	
 	authenticate();
+	toggleAttendance();
 
 	$courseId = 0;
 	$questions = Array();

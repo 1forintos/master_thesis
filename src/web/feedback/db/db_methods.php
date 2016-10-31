@@ -38,7 +38,7 @@
 		if(!$comment) {
 			throwError("No data submited.");
 		}
-		$courseId = $_SESSION['course_id']; 
+		$lecture_id = $_SESSION['lecture_id']; 
 
 		$result = pg_execute($GLOBALS['db'], "submit_comment", array(
 			$courseId, $comment	
@@ -76,6 +76,20 @@
 		echo json_encode($data);
 	}
 
+	function toggleAttendance() {
+		$attendanceInfo = pg_execute($GLOBALS['db'], "get_attendance_info", array(
+			$_SESSION['code']
+		));
+		$attendanceInfo = pg_fetch_array($attendanceInfo);
+		$result = pg_execute($GLOBALS['db'], "attended", array(
+			$attendanceInfo['lecture_id'],
+			$attendanceInfo['student_id']
+		));
+		if(!$result) {
+			error_log("Failed to set attendance. ");
+		}
+	}
+
 	function throwError($msg) {
 		$errorData = array(
 			"error" => $msg
@@ -108,6 +122,27 @@
 			VALUES($1, $2)
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "submit_comment", $sql);
+
+		# ATTENDANCE
+		$sql = "
+			SELECT 
+				L.id AS lecture_id, 
+				LC.student_id AS student_id
+			FROM lecture as L
+			JOIN lecture_code as LC
+				ON L.id = LC.lecture_id
+			WHERE LC.code = $1
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "get_attendance_info", $sql);
+
+		$sql = "
+			UPDATE Attendance
+			SET attended = TRUE
+			WHERE lecture_id = $1
+				AND student_id = $2
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "attended", $sql);
+
 
 		foreach($results as $result) {
 			if(!$result) {

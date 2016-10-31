@@ -11,12 +11,13 @@
 		}
 
 		$sql = "
-		  SELECT
-		    COUNT(*) AS code_found,
-				course_id
-		  FROM Lecture_Code
-		  WHERE code = $1
-		  GROUP BY id
+			SELECT 
+				LC.lecture_id AS lecture_id,
+				L.course_id AS course_id
+			FROM Lecture_Code AS LC
+			JOIN Lecture AS L
+				ON LC.lecture_id = L.id	
+			WHERE LC.code = $1
 		";
 
 		$result = pg_prepare($GLOBALS['db'], "login_data", $sql);
@@ -27,8 +28,9 @@
 		$data = pg_fetch_array($result);
 		pg_free_result($result);
 
-		if($data['code_found']) {
+		if($data) {
 			$_SESSION['authenticated'] = true;
+			$_SESSION['lecture_id'] = $data['lecture_id'];
 			$_SESSION['course_id'] = $data['course_id'];
 			$_SESSION['code'] = $_POST["code"];
 			$url = $GLOBALS['root'] . "evaluate";
