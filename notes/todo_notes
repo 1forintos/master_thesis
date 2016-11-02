@@ -1,9 +1,8 @@
 - irodalomkutatás
 - ha van cloud az is(, ezt kiválasztani)
 - monitoring use case
-- if a Lecturer is connected to a course...
-- rewrite lower level requirement texts according to convention
 
-- IBD
-- Monitoring - vmi mást szó
-- Course Evaluation Systemre valami jobbat
+TODO:
+	- Charts: select course -> started lecture (+ update)
+		 - feedback questions - answers 1-10 + cooldown
+	- Attendance table
