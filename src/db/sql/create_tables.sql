@@ -83,13 +83,6 @@ CREATE TABLE Enrollment (
   last_modification TIMESTAMP DEFAULT now()
 );
 
-CREATE TABLE Measurement (
-  id serial PRIMARY KEY,
-  type measurement_type NOT NULL,
-  course_id integer REFERENCES Course (id) NOT NULL,
-  last_modification TIMESTAMP DEFAULT now()
-);
-
 CREATE TABLE Environment_Control_Setting (
   id serial PRIMARY KEY,
   type measurement_type NOT NULL,
@@ -116,12 +109,6 @@ CREATE TABLE Feedback (
   timestamp TIMESTAMP DEFAULT now()
 );
 
-CREATE TABLE Comment (
-  id serial PRIMARY KEY,
-  lecture_id integer REFERENCES Lecture (id),
-  comment VARCHAR(300) NOT NULL,
-  timestamp TIMESTAMP DEFAULT now()
-);
 
 CREATE TABLE Lecture (
   id serial PRIMARY KEY,
@@ -130,6 +117,13 @@ CREATE TABLE Lecture (
   status lecture_status NOT NULL DEFAULT 'in_progress',
   start_date TIMESTAMP,
   end_date TIMESTAMP
+);
+
+CREATE TABLE Comment (
+  id serial PRIMARY KEY,
+  lecture_id integer REFERENCES Lecture (id),
+  comment VARCHAR(300) NOT NULL,
+  timestamp TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE Lecture_Code (
@@ -145,6 +139,14 @@ CREATE TABLE Attendance (
   lecture_id integer REFERENCES Lecture (id),
   student_id VARCHAR(100) REFERENCES Enrollment (student_id),
   attended BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE Measurement (
+  id serial PRIMARY KEY,
+  type measurement_type NOT NULL,
+  value real NOT NULL,
+  lecture_id integer REFERENCES Lecture (id) NOT NULL,
+  timestamp TIMESTAMP DEFAULT now()
 );
 
 /* add sample users */
