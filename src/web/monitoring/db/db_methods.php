@@ -8,7 +8,70 @@
 	if(isset($_POST['method'])) {
 		if($_POST['method'] == "getMeasurements") {
 			getMeasurements($_POST['data']);
+		} else if($_POST['method'] == "loadCourses") {
+			loadCourses();
+		} else if($_POST['method'] == "loadLectures") {
+			loadLectures($_POST['data']);
+		} else if($_POST['method'] == "loadQuestions") {
+			loadQuestions($_POST['data']);
 		} 
+	}
+
+	function loadCourses() {
+		$result = pg_execute($GLOBALS['db'], "load_courses", array());
+		if(!$result) {
+			pg_free_result($result);
+			throwError("Failed to get courses.");
+		}	
+		$data = pg_fetch_all($result);
+		pg_free_result($result);
+	
+		$result = array(
+			"status" => "success",
+			"data" => $data
+		);
+		echo json_encode($result);		
+	}
+
+	function loadLectures($courseId) {
+		error_log($courseId);
+		if(!$courseId) {
+			throwError("No course selected.");
+		}
+		$result = pg_execute($GLOBALS['db'], "load_lectures", array($courseId));
+		if(!$result) {
+			pg_free_result($result);
+			throwError("Failed to get lectures. [C_ID: " . $courseId . "]");
+		}	
+		$data = pg_fetch_all($result);
+		pg_free_result($result);
+	
+		$result = array(
+			"status" => "success",
+			"data" => $data
+		);
+		echo json_encode($result);		
+	}
+ 
+
+	function loadQuestions($courseId) {
+		error_log($courseId);
+		if(!$courseId) {
+			throwError("No course selected.");
+		}
+		$result = pg_execute($GLOBALS['db'], "load_questions", array($courseId));
+		if(!$result) {
+			pg_free_result($result);
+			throwError("Failed to get questions. [C_ID: " . $courseId . "]");
+		}	
+		$data = pg_fetch_all($result);
+		pg_free_result($result);
+	
+		$result = array(
+			"status" => "success",
+			"data" => $data
+		);
+		echo json_encode($result);		
 	}
 
 	function getMeasurements($data) {
@@ -55,6 +118,26 @@
 
 	function prepareStatements() {
 		$results = Array();
+
+		$sql = "
+			SELECT id, course_code, title
+			FROM Course
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "load_courses", $sql);
+
+		$sql = "
+			SELECT id, title, start_date, end_date
+			FROM Lecture
+			WHERE course_id = $1
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "load_lectures", $sql);
+
+		$sql = "
+			SELECT id, question_text
+			FROM Question
+			WHERE course_id = $1
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "load_questions", $sql);
 
 		$sql = "
 			SELECT value, timestamp

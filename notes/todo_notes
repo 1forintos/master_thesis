@@ -3,6 +3,7 @@
 - monitoring use case
 
 TODO:
+	- prompt adding title when lecture start
 	- Charts: select course -> started lecture (+ update)
 		 - feedback questions - answers 1-10 + cooldown
 	- Attendance table

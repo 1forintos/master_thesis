@@ -30,20 +30,50 @@
 </head>
 
 <body>
-	<div id="content" class="container">
+	<div hidden id="content" class="container">
 		<div class="row">
-			<label>Select a lecture to monitor:</label>
+			<label id="label-main">Please select a lecture of a course to monitor collected data</label>
 		</div>
 		<div class="row">
-			<select id="select-course" class="selectpicker" ></select>
+			<label for="select-course" class="label-secondary">Course:</label>
+			<select id="select-course" class="selectpicker col-lg-6 col-md-8 col-sm-10 col-xs-12"></select>
+		</div>
+		<div class="row">
+			<label for="select-lecture" class="label-secondary">Lecture:</label>
+			<select id="select-lecture" class="selectpicker col-lg-6 col-md-8 col-sm-10 col-xs-12"></select>
 		</div>
 		<hr>
 		<div class="row">
-			<div id="chart-temperature" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+			<label for="select-question" id="label-question">Question:</label>
+			<select id="select-question" class="selectpicker col-lg-6 col-md-8 col-sm-10 col-xs-12"></select>
 		</div>
-		<hr>
 		<div class="row">
-			<div id="chart-brightness" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+			<div id="checkbox-container" class="col-sm-3 col-sm-offset-3">
+				<div class="checkbox">
+					<label><input type="checkbox" value="">Temperature</label>
+				</div>
+				<div class="checkbox" class="col-md-3 col-md-5">
+					<label><input type="checkbox" value="">Brightness</label>
+				</div>
+			</div>
+			<div id="button-container">
+				<button id="button-view" type="button" 
+					class="col-xs-4 col-md-3 col-lg-3 btn btn-default"><span class="button-text">View</span></button>
+			</div>
+		</div>
+			
+		</div>
+		<div hidden id="temperature-container">
+			<hr>
+			<div class="row">
+				<div id="chart-temperature" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+			</div>
+		</div>
+		<div hidden id="brightness-container">
+			<hr>
+			<div class="row">
+				<div id="chart-brightness" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+			</div>
 		</div>
 	</div>
 </body>

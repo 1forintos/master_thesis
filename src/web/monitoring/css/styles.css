@@ -15,13 +15,22 @@ body {
 	margin-top: 0.5em;
 	margin-bottom: 1em;
 	color: white;	
+}
+
+#label-main {
+	font-size: 2em;
+}
+
+.label-secondary {
+	font-size: 1.5em;
+}
+
+#label-question {
 	font-size: 1.2em;
 }
 
-
 #content {
 	width: auto;
-	font-size: 2em;
 	text-align: center;
 }
 
@@ -36,4 +45,10 @@ body {
 
 .control-button {
 	height: 5em;
+}
+
+
+#button-container {
+	margin-top: 0.8em;
+	text-align: center;
 }
