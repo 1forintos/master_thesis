@@ -25,7 +25,7 @@
 
 		foreach($data as $evaluation) {
 			$result = pg_execute($GLOBALS['db'], "submit_evaluation", array(
-				$evaluation['question_id'], $evaluation['value']	
+				$_SESSION['lecture_id'], $evaluation['question_id'], $evaluation['value']	
 			));
 			if(!$result) {
 				throwError("Failed to submit evaluation. [Q_ID: " . $evaluation['question_id'] . "]");
@@ -41,10 +41,10 @@
 		$lecture_id = $_SESSION['lecture_id']; 
 
 		$result = pg_execute($GLOBALS['db'], "submit_comment", array(
-			$courseId, $comment	
+			$lecture_id, $comment	
 		));
 		if(!$result) {
-			throwError("Failed to submit comment. [C_ID: " . $courseId . "]");
+			throwError("Failed to submit comment. [C_ID: " . $lecture_id . "]");
 		}
 
 		echo "success";
@@ -111,14 +111,14 @@
 
 		# EVALUATE
 		$sql = "
-			INSERT INTO Feedback(question_id, feedback)
-			VALUES($1, $2)
+			INSERT INTO Feedback(lecture_id, question_id, feedback)
+			VALUES($1, $2, $3)
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "submit_evaluation", $sql);
 
 		# COMMENT
 		$sql = "
-			INSERT INTO Comment(course_id, comment)
+			INSERT INTO Comment(lecture_id, comment)
 			VALUES($1, $2)
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "submit_comment", $sql);

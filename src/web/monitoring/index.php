@@ -50,29 +50,34 @@
 		<div class="row">
 			<div id="checkbox-container" class="col-sm-3 col-sm-offset-3">
 				<div class="checkbox">
-					<label><input type="checkbox" value="">Temperature</label>
+					<label><input id="checkbox-temperature" type="checkbox" value="">Temperature</label>
 				</div>
 				<div class="checkbox" class="col-md-3 col-md-5">
-					<label><input type="checkbox" value="">Brightness</label>
+					<label><input id="checkbox-brightness" type="checkbox" value="">Brightness</label>
 				</div>
 			</div>
 			<div id="button-container">
 				<button id="button-view" type="button" 
-					class="col-xs-4 col-md-3 col-lg-3 btn btn-default"><span class="button-text">View</span></button>
+					class="col-xs-6 col-sm-3 btn btn-default col-xs-offset-3 col-sm-offset-0"><span class="button-text">View</span></button>
 			</div>
 		</div>
 			
+		<div hidden id="feedback-container">
+			<hr>
+			<div class="row">
+				<div id="chart-feedback" class="chart-view"></div>
+			</div>
 		</div>
 		<div hidden id="temperature-container">
 			<hr>
 			<div class="row">
-				<div id="chart-temperature" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+				<div id="chart-temperature" class="chart-view"></div>
 			</div>
 		</div>
 		<div hidden id="brightness-container">
 			<hr>
 			<div class="row">
-				<div id="chart-brightness" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+				<div id="chart-brightness" class="chart-view"></div>
 			</div>
 		</div>
 	</div>

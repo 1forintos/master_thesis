@@ -98,7 +98,8 @@
 		$codes = generateLectureCodes($courseId);
 		$result = array(
 			"status" => "success",
-			"data" => $codes
+			"data" => $codes,
+			"lectureId" => $lectureId
 		);
 		echo json_encode($result);
 	}
@@ -120,7 +121,11 @@
 			throwError("Failed to stop lecture for course.");
 		}
 
-		echo "success";
+		$result = array(
+			"status" => "success",
+			"lectureId" => $lectureId
+		);
+		echo json_encode($result);
 	}
 
 	function initAttendanceForNewLectureOfCourse($lectureId, $courseId) {

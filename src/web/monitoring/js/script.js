@@ -1,18 +1,33 @@
 $(document).ready(function() {
     loadCoursesIntoSelect(showContent);
 
-    var lectureId = 1;
-    var type = "temperature";
-    var id = "chart-temperature";
-    getMeasurements(id, lectureId, type);
-
-    type = "light";
-    id = "chart-brightness";
-    getMeasurements(id, lectureId, type);
+    $('#button-view').click(function() {
+        loadCharts();
+    });
 });
 
 function showContent() {
 	$('#content').show();
+}
+
+function loadCharts() {
+    var lectureId = $('#select-lecture').val();
+    getFeedback();
+
+    if(document.getElementById('checkbox-temperature').checked) {
+        var type = "temperature";
+        var id = "chart-temperature";
+        getMeasurements(id, lectureId, type);
+    } else {
+        $('#temperature-container').hide();
+    }
+    if(document.getElementById('checkbox-brightness').checked) {
+        var type = "light";
+        var id = "chart-brightness";
+        getMeasurements(id, lectureId, type);
+    }  else {
+        $('#brightness-container').hide();
+    }
 }
 
 function loadCoursesIntoSelect(_callback) {
@@ -24,7 +39,6 @@ function loadCoursesIntoSelect(_callback) {
 		},
 		success: function(result) {
 			var result = $.parseJSON(result);
-            console.log(result);
 			if('status' in result) {
 				if(result.status == "success") {
 					var select = null;
@@ -38,6 +52,7 @@ function loadCoursesIntoSelect(_callback) {
                     select.change(function () {
                         if($(this).val() != null) {
                             updateLectureSelect();
+                            updateQuestionSelect();
                         } else {
                             var selectL = $('#select-lectures');
                             selectL.val([]);
@@ -79,7 +94,7 @@ function updateLectureSelect() {
 						var newOption = document.createElement("option");
                         var text = result.data[i].start_date;
                         text = text.substring(0, text.indexOf("."));
-                        if(result.data[i].end_date != "") {
+                        if(result.data[i].end_date != null && result.data[i].end_date != "") {
                             var date = result.data[i].end_date;
                             date = date.substring(0, date.indexOf("."));
                             text += " - " + date;
@@ -101,7 +116,6 @@ function updateLectureSelect() {
 		}
 	});
 }
-
 
 function updateQuestionSelect() {
 	$.ajax({
@@ -135,8 +149,7 @@ function updateQuestionSelect() {
 	});
 }
 
-
-function getMeasurements(id, lectureId, type) {
+function getMeasurements(chartId, lectureId, type) {
     var data = {};
     data.lecture_id = lectureId;
     data.type = type;
@@ -145,7 +158,7 @@ function getMeasurements(id, lectureId, type) {
         type: "POST",
         url: "/monitoring/db/db_methods.php",
         data: {
-        data: data,
+            data: data,
             method: "getMeasurements"
         },
         success: function(result) {
@@ -157,8 +170,8 @@ function getMeasurements(id, lectureId, type) {
                     var date = parts[0].split("-");
                     var time = parts[1].split(":");
                     dataArray.push([
-                    Date.UTC(date[0], date[1], date[2], time[0], time[1], time[2]), 
-                    parseInt(resultObj.data[i].value)
+                        Date.UTC(date[0], date[1], date[2], time[0], time[1], time[2]), 
+                        parseInt(resultObj.data[i].value)
                     ]);
                 }
 
@@ -175,8 +188,73 @@ function getMeasurements(id, lectureId, type) {
                     textX = "Time";
                     textY = "Brightness (whoKnowsWhat.. lumen mayb? kOhm naaah?)";
                 }
-                drawChart(id, title, textX, textY, dataArray);
+                if(dataArray.length == 0) {
+                    alert("No " + type + " data for this lecture.");
+                    if(type == "temperature") {
+                        $('#temperature-container').hide();
+                    } else if(type == "light") {
+                        $('#brightness-container').hide();
+                    }
+                } else {
+                    drawChart(chartId, title, textX, textY, dataArray);
+                    if(type == "temperature") {
+                        $('#temperature-container').show();
+                    } else if(type == "light") {
+                        $('#brightness-container').show();
+                    }
+                }
+            } else {
+                if('error' in resultObj) {
+                    alert("Error: " + resultObj.error);
+                } else {
+                    console.log("What the heck happened??");
+                }
+            } 
+        }    
+	});
+}
 
+function getFeedback() {
+    var lectureId = $('#select-lecture').val();
+    var questionId = $('#select-question').val();
+    var data = {};
+    data.lecture_id = lectureId;
+    data.question_id = questionId;
+
+    $.ajax({
+        type: "POST",
+        url: "/monitoring/db/db_methods.php",
+        data: {
+            data: data,
+            method: "getFeedback"
+        },
+        success: function(result) {
+            var resultObj = $.parseJSON(result);
+            if(resultObj.status == "success") {
+                console.log(resultObj.data);
+                var dataArray = [];
+                for(var i in resultObj.data) {
+                    var parts = resultObj.data[i].timestamp.split(" ");
+                    var date = parts[0].split("-");
+                    var time = parts[1].split(":");
+                    dataArray.push([
+                        Date.UTC(date[0], date[1], date[2], time[0], time[1], time[2]), 
+                        parseInt(resultObj.data[i].feedback)
+                    ]);
+                }
+
+                if(dataArray.length == 0) {
+                    alert("No feedback data for this lecture.");
+                    $('#feedback-container').hide();
+                } else {
+                    $('#feedback-container').show();
+                }
+
+                var title = "Question: " + $('#select-question option:selected').text();
+                var textX = "Time";
+                var textY = "Value";
+                var chartId = "chart-feedback";
+                drawChart(chartId, title, textX, textY, dataArray);
             } else {
                 if('error' in resultObj) {
                     alert("Error: " + resultObj.error);

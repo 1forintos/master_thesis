@@ -102,13 +102,6 @@ CREATE TABLE Question  (
   last_modification TIMESTAMP DEFAULT now()
 );
 
-CREATE TABLE Feedback (
-  id serial PRIMARY KEY,
-  question_id integer REFERENCES Question (id),
-  feedback integer NOT NULL,
-  timestamp TIMESTAMP DEFAULT now()
-);
-
 
 CREATE TABLE Lecture (
   id serial PRIMARY KEY,
@@ -117,6 +110,14 @@ CREATE TABLE Lecture (
   status lecture_status NOT NULL DEFAULT 'in_progress',
   start_date TIMESTAMP,
   end_date TIMESTAMP
+);
+
+CREATE TABLE Feedback (
+  id serial PRIMARY KEY,
+  lecture_id integer REFERENCES Lecture (id),
+  question_id integer REFERENCES Question (id),
+  feedback integer NOT NULL,
+  timestamp TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE Comment (

@@ -10,11 +10,11 @@ function prepareStatements() {
 	$results = Array();
 
 	$sql = "
-		SELECT course_id
+		SELECT lecture_id
 		FROM Lecture_Code
 		WHERE code = $1
 	";
-	$results[] = pg_prepare($GLOBALS['db'], "get_course_id_for_code", $sql);
+	$results[] = pg_prepare($GLOBALS['db'], "get_lecture_id_for_code", $sql);
 
 	foreach($results as $result) {
 		if(!$result) {

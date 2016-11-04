@@ -47,8 +47,12 @@ body {
 	height: 5em;
 }
 
-
 #button-container {
 	margin-top: 0.8em;
 	text-align: center;
+}
+
+.chart-view {
+	width: 90vw;
+	margin: auto;
 }

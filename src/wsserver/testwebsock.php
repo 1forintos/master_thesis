@@ -13,7 +13,7 @@ class echoServer extends WebSocketServer {
     switch ($data->action) {
       case 'start_lecture':
         $this->lectures[] = array(
-          "courseId" => $data->courseId,
+          "lectureId" => $data->lectureId,
           "lecturerId" => $data->lecturerId,
           "lecturerSocketId" => $user->id, 
           "studentSocketIds" => Array()
@@ -22,7 +22,7 @@ class echoServer extends WebSocketServer {
       case 'stop_lecture':
         $tmp = $this->lectures;
         foreach($tmp as $key => $lecture) {
-          if($lecture['courseId'] == $data->courseId) {
+          if($lecture['lectureId'] == $data->lectureId) {
             $this->kickStudents($key);
             unset($this->lectures[$key]);
             break;
@@ -102,18 +102,18 @@ class echoServer extends WebSocketServer {
   }
 
   protected function addStudentToLecture($code, $socketId) {
-		$result = pg_execute($GLOBALS['db'], "get_course_id_for_code", array($code));
+		$result = pg_execute($GLOBALS['db'], "get_lecture_id_for_code", array($code));
 		if(!$result) { 
-			error_log("Failed to get course ID for code: [" . $code . "]");
+			error_log("Failed to get lecture ID for code: [" . $code . "]");
 		}
     if(count($result) < 1) {
       return;
     } 
     $result = pg_fetch_row($result);
-    $courseId = reset($result);
+    $lectureId = reset($result);
     foreach($this->lectures as $key => $lecture) {
       echo print_r($lecture, true);
-      if($lecture['courseId'] == $courseId) {
+      if($lecture['lectureId'] == $lectureId) {
         $this->lectures[$key]['studentSocketIds'][$code] = $socketId;
         break;
       }

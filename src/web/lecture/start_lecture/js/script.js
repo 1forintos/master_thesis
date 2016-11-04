@@ -24,10 +24,11 @@ function stopLecture() {
 			method: "stopLecture"
 		},
 		success: function(result) {
-			if(result == "success") {
+      var resultObj = $.parseJSON(result);
+			if(resultObj.status == "success") {
 				var data = {
 					action: "stop_lecture",
-					courseId: $('#select-course').val()
+					lectureId: resultObj.lectureId
 				};
 				sendMsgViaSocket(data);
 				alert("Success.");
@@ -53,7 +54,9 @@ function startLecture() {
 		},
 		success: function(result) {
       var resultObj = $.parseJSON(result);
+      var lectureId = null;
 			if(resultObj.status == "success") {
+        lectureId = resultObj.lectureId;
         var download = $('<a></a>')
           .attr('href','data:text/csv;charset=utf8,' + encodeURIComponent(resultObj.data))
           .attr('download','codes.csv')
@@ -70,10 +73,10 @@ function startLecture() {
         success: function(result) {
           var resultObj = $.parseJSON(result);
           if(resultObj.status == "success") {
-							var data = {
+            var data = {
 							action: "start_lecture",
               lecturerId: resultObj.userId,
-							courseId: $('#select-course').val()
+							lectureId: lectureId
 						};
 						sendMsgViaSocket(data);
           } else {

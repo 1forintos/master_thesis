@@ -18,17 +18,22 @@
 	";
 	$results[] = pg_prepare($GLOBALS['db'], "insert_measurement", $sql);
 
-	$lectureId = 2;
+	$sql = "
+		INSERT INTO Feedback(lecture_id, question_id, feedback, timestamp)
+		VALUES($1, $2, $3, $4)
+	";
+	$results[] = pg_prepare($GLOBALS['db'], "insert_feedback", $sql);
+
+	$lectureId = 12;
 
 	pg_query("BEGIN");
 
 	$baseValue = 15;
 	$type = "temperature";
 	$numOfData = 1000;
-	$add = true;
 	$hour = 12;
-	$minute = 0;
-	$second = 0;
+	$minute = 6;
+	$second = 4;
 
 	for($i = 0; $i < $numOfData; $i++) {
 		$random = rand(-6, 6);
@@ -46,8 +51,9 @@
 			pg_query("ROLLBACK");
 			break;
 		} else {
-			echo "INSERTED DATA: Type [" . $type . "], Value [" . $newValue . 
-			"], Lecture ID [" . $lectureId . "], Timestamp [" . $timestamp . "]\n";
+			//echo "INSERTED DATA: Type [" . $type . "], Value [" . $newValue . 
+			//"], Lecture ID [" . $lectureId . "], Timestamp [" . $timestamp . "]\n";
+			echo "inserted measurement.\n";
 		}
 
 		$second += 6;
@@ -61,14 +67,12 @@
 		}
 	}
 
-
 	$type = "light";
 	$baseValue = 60;
 	$numOfData = 1000;
-	$add = true;
 	$hour = 12;
-	$minute = 0;
-	$second = 0;
+	$minute = 3;
+	$second = 2;
 
 	for($i = 0; $i < $numOfData; $i++) {
 		$random = rand(-10, 10);
@@ -86,8 +90,46 @@
 			pg_query("ROLLBACK");
 			break;
 		} else {
-			echo "INSERTED DATA: Type [" . $type . "], Value [" . $newValue . 
-			"], Lecture ID [" . $lectureId . "], Timestamp [" . $timestamp . "]\n";
+			//echo "INSERTED DATA: Type [" . $type . "], Value [" . $newValue . 
+			//"], Lecture ID [" . $lectureId . "], Timestamp [" . $timestamp . "]\n";
+			echo "inserted measurement.\n";
+		}
+
+		$second += 6;
+		if($second > 59) {
+			$minute++;
+			$second = 0;
+			if($minute > 59) {
+				$hour++;
+				$minute = 0;
+			}
+		}
+	}
+
+	$numOfData = 1000;
+	$hour = 12;
+	$minute = 0;
+	$second = 7;
+	for($i = 0; $i < $numOfData; $i++) {
+		$random = rand(1, 10);
+		$newValue = rand(1, 10);
+		$timestamp = "2016-09-02 " . $hour . ":" . $minute . ":" . $second;
+
+		$questionId = 5;
+		$result = pg_execute($GLOBALS['db'], "insert_feedback", array(
+			$lectureId, $questionId, $newValue, $timestamp
+		));
+
+		$questionId = 6;
+		$result = pg_execute($GLOBALS['db'], "insert_feedback", array(
+			$lectureId, $questionId, $newValue, $timestamp
+		));
+		if(!$result) {
+			echo "FAILED\n";
+			pg_query("ROLLBACK");
+			break;
+		} else {
+			echo "inserted feedback.\n";
 		}
 
 		$second += 6;

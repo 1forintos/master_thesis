@@ -14,6 +14,8 @@
 			loadLectures($_POST['data']);
 		} else if($_POST['method'] == "loadQuestions") {
 			loadQuestions($_POST['data']);
+		} else if($_POST['method'] == "getFeedback") {
+			getFeedback($_POST['data']);
 		} 
 	}
 
@@ -34,7 +36,6 @@
 	}
 
 	function loadLectures($courseId) {
-		error_log($courseId);
 		if(!$courseId) {
 			throwError("No course selected.");
 		}
@@ -55,7 +56,6 @@
  
 
 	function loadQuestions($courseId) {
-		error_log($courseId);
 		if(!$courseId) {
 			throwError("No course selected.");
 		}
@@ -64,9 +64,15 @@
 			pg_free_result($result);
 			throwError("Failed to get questions. [C_ID: " . $courseId . "]");
 		}	
-		$data = pg_fetch_all($result);
+		$data = array();
+		while($row = pg_fetch_array($result)) {
+			$data[] = array();
+			foreach($row as $key => $value) {
+				$data[count($data) - 1][$key] = utf8_encode($value);
+			}
+		}
 		pg_free_result($result);
-	
+
 		$result = array(
 			"status" => "success",
 			"data" => $data
@@ -81,6 +87,7 @@
 		if(!lectureExists($data['lecture_id'])) {
 			throwError("Lecture not found. [ID: " . $data['lecture_id'] . "]");
 		}
+
 		$result = pg_execute($GLOBALS['db'], "get_measurements", array(
 			$data['lecture_id'],
 			$data['type']
@@ -89,13 +96,57 @@
 			throwError("Failed to retrieve measurements. [L_ID: " . $data['lecture_id'] . 
 				", type: " . $data['type'] . "]");
 		}
-		$results = pg_fetch_all($result);
+		$data = array();
+		while($row = pg_fetch_array($result)) {
+			$data[] = array();
+			foreach($row as $key => $value) {
+				$data[count($data) - 1][$key] = utf8_encode($value);
+			}
+		}
+		pg_free_result($result);
 
-		$results = array(
+		$result = array(
 			"status" => "success",
-			"data" => $results
+			"data" => $data
 		);
-		echo json_encode($results);
+		echo json_encode($result);
+	}
+
+	function getFeedback($data) {
+		if(!$data['lecture_id']) {
+			throwError("No lecture selected.");
+		}
+		if(!$data['question_id']) {
+			throwError("No question selected.");
+		}
+		if(!lectureExists($data['lecture_id'])) {
+			throwError("Lecture not found. [ID: " . $data['lecture_id'] . "]");
+		}
+		if(!questionExists($data['question_id'])) {
+			throwError("Question not found. [ID: " . $data['question_id'] . "]");
+		}
+
+		$result = pg_execute($GLOBALS['db'], "load_feedback_for_question", array(
+			$data['lecture_id'], $data['question_id']
+		));
+		if(!$result) {
+			pg_free_result($result);
+			throwError("Failed to load feedback.");
+		}	
+		$data = array();
+		while($row = pg_fetch_array($result)) {
+			$data[] = array();
+			foreach($row as $key => $value) {
+				$data[count($data) - 1][$key] = utf8_encode($value);
+			}
+		}
+		pg_free_result($result);
+
+		$result = array(
+			"status" => "success",
+			"data" => $data
+		);
+		echo json_encode($result);		
 	}
 
 	function lectureExists($lectureId) {
@@ -103,6 +154,17 @@
 		$result = pg_fetch_array($result);
 
 		if($result['lecture_exists']) {
+			return true;
+		}
+		return false;
+	}
+
+
+	function questionExists($questionId) {
+		$result = pg_execute($GLOBALS['db'], "question_exists", array($questionId));
+		$result = pg_fetch_array($result);
+
+		if($result['question_exists']) {
 			return true;
 		}
 		return false;
@@ -148,11 +210,26 @@
 		$results[] = pg_prepare($GLOBALS['db'], "get_measurements", $sql);
 
 		$sql = "
+			SELECT feedback, timestamp
+			FROM Feedback
+			WHERE lecture_id = $1
+				AND question_id = $2
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "load_feedback_for_question", $sql);
+
+		$sql = "
 			SELECT COUNT(*) AS lecture_exists
 			FROM Lecture
 			WHERE id = $1
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "lecture_exists", $sql);
+
+		$sql = "
+			SELECT COUNT(*) AS question_exists
+			FROM Question
+			WHERE id = $1
+		";
+		$results[] = pg_prepare($GLOBALS['db'], "question_exists", $sql);
 
 		foreach($results as $result) {
 			if(!$result) {
