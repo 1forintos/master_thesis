@@ -1,5 +1,5 @@
 <?php
-	require_once "db/db_methods.php";
+	require_once "../db/db_methods.php";
 ?>
 
 <!DOCTYPE html>
@@ -15,6 +15,8 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
 		crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/css/bootstrap-select.min.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.10/css/dataTables.bootstrap.min.css">
+
 	<link rel="stylesheet" href="css/styles.css">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -22,18 +24,16 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
 		crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/js/bootstrap-select.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js"></script>
 
-	<script src="https://code.highcharts.com/highcharts.js"></script>
-	<script src="https://code.highcharts.com/modules/exporting.js"></script>
 
 	<script src="js/script.js"></script>
 </head>
 
 <body>
 	<div hidden id="content" class="container">
-		<div class="row">
-			<label id="label-main">Please select a lecture of a course to monitor collected data</label>
-		</div>
+		<label id="label-main">Attendance</label>
 		<div class="row">
 			<label for="select-course" class="label-secondary">Course:</label>
 			<select id="select-course" class="selectpicker col-lg-6 col-md-8 col-sm-10 col-xs-12" data-live-search="true"></select>
@@ -43,41 +43,21 @@
 			<select id="select-lecture" class="selectpicker col-lg-6 col-md-8 col-sm-10 col-xs-12" data-live-search="true"></select>
 		</div>
 		<hr>
-		<div class="row">
-			<label for="select-question" id="label-question">Question:</label>
-			<select id="select-question" class="selectpicker col-lg-6 col-md-8 col-sm-10 col-xs-12"></select>
-		</div>
-		<div class="row">
-			<div id="checkbox-container" class="col-sm-3 col-sm-offset-3">
-				<div class="checkbox">
-					<label><input id="checkbox-temperature" type="checkbox" value="">Temperature</label>
+		<div id="attencance-container">
+			<div class="panel panel-default col-sm-6 col-sm-offset-3">
+	  			<div class="panel-body">
+						<div class="table-responsive">
+							<table id="table-attendance" class="table table-striped table-bordered" cellspacing="0" width="100%">
+								<thead>
+									<tr>
+										<th width="65%">Student ID</th>
+										<th width="35%">Attended</th>
+									</tr>
+									</thead>
+								<tbody/>
+							</table>
+						</div>
 				</div>
-				<div class="checkbox" class="col-md-3 col-md-5">
-					<label><input id="checkbox-brightness" type="checkbox" value="">Brightness</label>
-				</div>
-			</div>
-			<div id="button-container">
-				<button id="button-view" type="button" 
-					class="col-xs-6 col-sm-3 btn btn-default col-xs-offset-3 col-sm-offset-0"><span class="button-text">View</span></button>
-			</div>
-		</div>
-			
-		<div hidden id="feedback-container">
-			<hr>
-			<div class="row">
-				<div id="chart-feedback" class="chart-view"></div>
-			</div>
-		</div>
-		<div hidden id="temperature-container">
-			<hr>
-			<div class="row">
-				<div id="chart-temperature" class="chart-view"></div>
-			</div>
-		</div>
-		<div hidden id="brightness-container">
-			<hr>
-			<div class="row">
-				<div id="chart-brightness" class="chart-view"></div>
 			</div>
 		</div>
 	</div>

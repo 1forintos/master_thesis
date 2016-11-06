@@ -139,7 +139,8 @@ CREATE TABLE Attendance (
   id serial PRIMARY KEY,
   lecture_id integer REFERENCES Lecture (id),
   student_id VARCHAR(100) REFERENCES Enrollment (student_id),
-  attended BOOLEAN NOT NULL DEFAULT FALSE
+  attended BOOLEAN NOT NULL DEFAULT FALSE,
+  CONSTRAINT attendance_constraint UNIQUE (lecture_id, student_id)
 );
 
 CREATE TABLE Measurement (
