@@ -56,6 +56,102 @@
 		echo json_encode($result);		
 	}
 
+
+
+	function loadQuestions($courseId) {
+		if(!$courseId) {
+			throwError("No course selected.");
+		}
+		$result = pg_execute($GLOBALS['db'], "load_questions", array($courseId));
+		if(!$result) {
+			pg_free_result($result);
+			throwError("Failed to get questions. [C_ID: " . $courseId . "]");
+		}	
+		$data = array();
+		while($row = pg_fetch_array($result)) {
+			$data[] = array();
+			foreach($row as $key => $value) {
+				$data[count($data) - 1][$key] = utf8_encode($value);
+			}
+		}
+		pg_free_result($result);
+
+		$result = array(
+			"status" => "success",
+			"data" => $data
+		);
+		echo json_encode($result);		
+	}
+
+	function getMeasurements($data) {
+		if(!$data['lecture_id']) {
+			throwError("No lecture selected.");
+		}
+		if(!lectureExists($data['lecture_id'])) {
+			throwError("Lecture not found. [ID: " . $data['lecture_id'] . "]");
+		}
+
+		$result = pg_execute($GLOBALS['db'], "get_measurements", array(
+			$data['lecture_id'],
+			$data['type']
+		));
+		if(!$result) {
+			throwError("Failed to retrieve measurements. [L_ID: " . $data['lecture_id'] . 
+				", type: " . $data['type'] . "]");
+		}
+		$data = array();
+		while($row = pg_fetch_array($result)) {
+			$data[] = array();
+			foreach($row as $key => $value) {
+				$data[count($data) - 1][$key] = utf8_encode($value);
+			}
+		}
+		pg_free_result($result);
+
+		$result = array(
+			"status" => "success",
+			"data" => $data
+		);
+		echo json_encode($result);
+	}
+
+	function getFeedback($data) {
+		if(!$data['lecture_id']) {
+			throwError("No lecture selected.");
+		}
+		if(!$data['question_id']) {
+			throwError("No question selected.");
+		}
+		if(!lectureExists($data['lecture_id'])) {
+			throwError("Lecture not found. [ID: " . $data['lecture_id'] . "]");
+		}
+		if(!questionExists($data['question_id'])) {
+			throwError("Question not found. [ID: " . $data['question_id'] . "]");
+		}
+
+		$result = pg_execute($GLOBALS['db'], "load_feedback_for_question", array(
+			$data['lecture_id'], $data['question_id']
+		));
+		if(!$result) {
+			pg_free_result($result);
+			throwError("Failed to load feedback.");
+		}	
+		$data = array();
+		while($row = pg_fetch_array($result)) {
+			$data[] = array();
+			foreach($row as $key => $value) {
+				$data[count($data) - 1][$key] = utf8_encode($value);
+			}
+		}
+		pg_free_result($result);
+
+		$result = array(
+			"status" => "success",
+			"data" => $data
+		);
+		echo json_encode($result);		
+	}
+
 	function loadAttendance($lectureId) {
 		if(!$lectureId) {
 			throwError("No course selected.");
