@@ -89,7 +89,7 @@ CREATE TABLE Environment_Control_Setting (
   threshold real NOT NULL,
   control_method environment_control_method NOT NULL,
   control_value VARCHAR(20) NOT NULL,
-  notes varchar(100) NOT NULL,
+  notes varchar(100),
   CONSTRAINT ec_u_constraint UNIQUE (type, control_method),
   last_modification TIMESTAMP DEFAULT now()
 );
@@ -123,7 +123,7 @@ CREATE TABLE Feedback (
 CREATE TABLE Comment (
   id serial PRIMARY KEY,
   lecture_id integer REFERENCES Lecture (id),
-  comment VARCHAR(300) NOT NULL,
+  comment_text VARCHAR(300) NOT NULL,
   timestamp TIMESTAMP DEFAULT now()
 );
 
