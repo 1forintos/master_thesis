@@ -1,0 +1,20 @@
+body {
+	background-color: #AAA;
+	background-image: url(/administration/pics/subtle_hexagon.jpg);
+    background-repeat: repeat-xy;
+}
+
+.dropdown-menu {
+	width: 100%;
+}
+
+#logo {
+	width: 2em;
+	height: 2em;
+	position: relative;
+	bottom: 40%;
+}
+
+header {
+	font-weight: bold;
+}
