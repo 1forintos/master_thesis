@@ -5,16 +5,16 @@ function init() {
   var host = "ws://152.66.183.81:9000/echobot"; // SET THIS TO YOUR SERVER
   try {
     socket = new WebSocket(host);
-    log('WebSocket - status ' + socket.readyState);
+    //log('WebSocket - status ' + socket.readyState);
     socket.onopen = function (msg) {
-      log("Welcome - status " + this.readyState);
+      //log("Welcome - status " + this.readyState);
       updateLecturerSocket();
     };
     socket.onmessage = function (msg) {
       log("Received: " + msg.data);
     };
     socket.onclose = function (msg) {
-      log("Disconnected - status " + this.readyState);
+      //log("Disconnected - status " + this.readyState);
     };
   }
   catch (ex) {
