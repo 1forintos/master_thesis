@@ -24,24 +24,24 @@
 	";
 	$results[] = pg_prepare($GLOBALS['db'], "insert_feedback", $sql);
 
-	$lectureId = 12;
+	$lectureId = 1;
 
 	pg_query("BEGIN");
 
 	$baseValue = 15;
 	$type = "temperature";
 	$numOfData = 1000;
-	$hour = 12;
-	$minute = 6;
+	$hour = 14;
+	$minute = 2;
 	$second = 4;
 
 	for($i = 0; $i < $numOfData; $i++) {
 		$random = rand(-6, 6);
 		$randomFloat = rand(0, 10) / 10;
-		$timestamp = "2016-09-02 " . $hour . ":" . $minute . ":" . $second;
+		$timestamp = "2016-11-09 " . $hour . ":" . $minute . ":" . $second;
 
 		$newValue = $baseValue + $random + $randomFloat;
-		
+
 		$result = pg_execute($GLOBALS['db'], "insert_measurement", array(
 			$type, $newValue, $lectureId, $timestamp
 		));
@@ -51,7 +51,7 @@
 			pg_query("ROLLBACK");
 			break;
 		} else {
-			//echo "INSERTED DATA: Type [" . $type . "], Value [" . $newValue . 
+			//echo "INSERTED DATA: Type [" . $type . "], Value [" . $newValue .
 			//"], Lecture ID [" . $lectureId . "], Timestamp [" . $timestamp . "]\n";
 			echo "inserted measurement.\n";
 		}
@@ -67,7 +67,7 @@
 		}
 	}
 
-	$type = "light";
+	$type = "brightness";
 	$baseValue = 60;
 	$numOfData = 1000;
 	$hour = 12;
@@ -75,12 +75,12 @@
 	$second = 2;
 
 	for($i = 0; $i < $numOfData; $i++) {
-		$random = rand(-10, 10);
+		$random = rand(-5, 5);
 		$randomFloat = rand(0, 10) / 10;
-		$timestamp = "2016-09-02 " . $hour . ":" . $minute . ":" . $second;
+		$timestamp = "2016-11-09 " . $hour . ":" . $minute . ":" . $second;
 
 		$newValue = $baseValue + $random + $randomFloat;
-		
+
 		$result = pg_execute($GLOBALS['db'], "insert_measurement", array(
 			$type, $newValue, $lectureId, $timestamp
 		));
@@ -90,7 +90,7 @@
 			pg_query("ROLLBACK");
 			break;
 		} else {
-			//echo "INSERTED DATA: Type [" . $type . "], Value [" . $newValue . 
+			//echo "INSERTED DATA: Type [" . $type . "], Value [" . $newValue .
 			//"], Lecture ID [" . $lectureId . "], Timestamp [" . $timestamp . "]\n";
 			echo "inserted measurement.\n";
 		}
@@ -113,14 +113,20 @@
 	for($i = 0; $i < $numOfData; $i++) {
 		$random = rand(1, 10);
 		$newValue = rand(1, 10);
-		$timestamp = "2016-09-02 " . $hour . ":" . $minute . ":" . $second;
+		$timestamp = "2016-11-09 " . $hour . ":" . $minute . ":" . $second;
 
-		$questionId = 5;
+		$questionId = 7;
 		$result = pg_execute($GLOBALS['db'], "insert_feedback", array(
 			$lectureId, $questionId, $newValue, $timestamp
 		));
 
-		$questionId = 6;
+		$newValue = rand(1, 10);
+		$questionId = 8;
+		$result = pg_execute($GLOBALS['db'], "insert_feedback", array(
+			$lectureId, $questionId, $newValue, $timestamp
+		));
+		$newValue = rand(1, 10);
+		$questionId = 9;
 		$result = pg_execute($GLOBALS['db'], "insert_feedback", array(
 			$lectureId, $questionId, $newValue, $timestamp
 		));

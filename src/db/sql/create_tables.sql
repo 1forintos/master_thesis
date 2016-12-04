@@ -27,7 +27,7 @@ BEGIN
   IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'measurement_type') THEN
     DROP TYPE measurement_type;
   END IF;
-  CREATE TYPE measurement_type AS ENUM ('temperature', 'light');
+  CREATE TYPE measurement_type AS ENUM ('temperature', 'brightness');
 END
 $$;
 
@@ -69,8 +69,8 @@ CREATE TABLE Course (
 
 CREATE TABLE Lecturer (
   id serial PRIMARY KEY,
-  user_id integer REFERENCES Webuser (id) NOT NULL,
-  course_id integer REFERENCES Course (id) NOT NULL,
+  user_id integer REFERENCES Webuser (id) ON DELETE CASCADE NOT NULL,
+  course_id integer REFERENCES Course (id) ON DELETE CASCADE NOT NULL,
   notes varchar(100),
   last_modification TIMESTAMP DEFAULT now(),
   CONSTRAINT u_constraint UNIQUE (user_id, course_id)
@@ -78,9 +78,10 @@ CREATE TABLE Lecturer (
 
 CREATE TABLE Enrollment (
   id serial PRIMARY KEY,
-  course_id integer REFERENCES Course (id) NOT NULL,
-  student_id varchar(100) UNIQUE NOT NULL,
-  last_modification TIMESTAMP DEFAULT now()
+  course_id integer REFERENCES Course (id) ON DELETE CASCADE NOT NULL,
+  student_id varchar(100) NOT NULL,
+  last_modification TIMESTAMP DEFAULT now(),
+  CONSTRAINT u_constraint_student UNIQUE (course_id, student_id)
 );
 
 CREATE TABLE Environment_Control_Setting (
@@ -96,7 +97,7 @@ CREATE TABLE Environment_Control_Setting (
 
 CREATE TABLE Question  (
   id serial PRIMARY KEY,
-  course_id integer REFERENCES Course (id),
+  course_id integer REFERENCES Course (id) ON DELETE CASCADE,
   question_text VARCHAR(100) NOT NULL,
   CONSTRAINT q_u_constraint UNIQUE (course_id, question_text),
   last_modification TIMESTAMP DEFAULT now()
@@ -105,7 +106,7 @@ CREATE TABLE Question  (
 
 CREATE TABLE Lecture (
   id serial PRIMARY KEY,
-  course_id integer REFERENCES Course (id),
+  course_id integer REFERENCES Course (id) ON DELETE CASCADE,
   title VARCHAR(100),
   status lecture_status NOT NULL DEFAULT 'in_progress',
   start_date TIMESTAMP,
@@ -114,31 +115,31 @@ CREATE TABLE Lecture (
 
 CREATE TABLE Feedback (
   id serial PRIMARY KEY,
-  lecture_id integer REFERENCES Lecture (id),
-  question_id integer REFERENCES Question (id),
+  lecture_id integer REFERENCES Lecture (id) ON DELETE CASCADE,
+  question_id integer REFERENCES Question (id) ON DELETE CASCADE,
   feedback integer NOT NULL,
   timestamp TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE Comment (
   id serial PRIMARY KEY,
-  lecture_id integer REFERENCES Lecture (id),
+  lecture_id integer REFERENCES Lecture (id) ON DELETE CASCADE,
   comment_text VARCHAR(300) NOT NULL,
   timestamp TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE Lecture_Code (
   id serial PRIMARY KEY,
-  lecture_id integer REFERENCES Lecture (id),
+  lecture_id integer REFERENCES Lecture (id) ON DELETE CASCADE,
   code VARCHAR(20) UNIQUE NOT NULL,
-  student_id VARCHAR(100) REFERENCES Enrollment (student_id),
+  student_id VARCHAR(100) REFERENCES Enrollment (student_id) ON DELETE CASCADE,
   timestamp TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE Attendance (
   id serial PRIMARY KEY,
-  lecture_id integer REFERENCES Lecture (id),
-  student_id VARCHAR(100) REFERENCES Enrollment (student_id),
+  lecture_id integer REFERENCES Lecture (id) ON DELETE CASCADE,
+  student_id VARCHAR(100) REFERENCES Enrollment (student_id) ON DELETE CASCADE,
   attended BOOLEAN NOT NULL DEFAULT FALSE,
   CONSTRAINT attendance_constraint UNIQUE (lecture_id, student_id)
 );
@@ -147,48 +148,48 @@ CREATE TABLE Measurement (
   id serial PRIMARY KEY,
   type measurement_type NOT NULL,
   value real NOT NULL,
-  lecture_id integer REFERENCES Lecture (id) NOT NULL,
+  lecture_id integer REFERENCES Lecture (id) ON DELETE CASCADE NOT NULL,
   timestamp TIMESTAMP DEFAULT now()
 );
 
 /* add sample users */
 INSERT INTO Webuser (email, password, full_name, user_type, notes)
-VALUES ('dev@example.com', 'dev', 'Mr Developer', 'dev', 'notes 1');
+VALUES ('dev@example.com', 'dev', 'Mr Developer', 'dev', '');
 
 INSERT INTO Webuser (email, password, full_name, user_type, notes)
-VALUES ('user_admin1@example.com', 'pass', 'Mr User Admin 1', 'user_admin', 'notes 2');
+VALUES ('user_admin1@example.com', 'pass', 'User Administrator 1', 'user_admin', '');
 
 INSERT INTO Webuser (email, password, full_name, user_type, notes)
-VALUES ('user_admin2@example.com', 'pass', 'Mr User Admin 2', 'user_admin', 'notes3');
+VALUES ('user_admin2@example.com', 'pass', 'User Administrator 2', 'user_admin', 'some notes');
 
 INSERT INTO Webuser (email, password, full_name, user_type, notes)
-VALUES ('course_admin1@example.com', 'pass', 'Mr Course Admin 1', 'course_admin', 'notes 4');
+VALUES ('course_admin1@example.com', 'pass', 'Course Administrator 1', 'course_admin', 'notes');
 
 INSERT INTO Webuser (email, password, full_name, user_type, notes)
-VALUES ('course_admin2@example.com', 'pass', 'Mr Course Admin 2', 'course_admin', 'notes 5');
+VALUES ('course_admin2@example.com', 'pass', 'Course Administrator 2', 'course_admin', 'more notes');
 
 INSERT INTO Webuser (email, password, full_name, user_type, notes)
-VALUES ('lecturer1@example.com', 'pass', 'Prof Lecturer 1', 'lecturer', 'really clever');
+VALUES ('lecturer1@example.com', 'pass', 'Lecturer 1', 'lecturer', '');
 
 INSERT INTO Webuser (email, password, full_name, user_type, notes)
-VALUES ('lecturer2@example.com', 'pass', 'Prof Lecturer 2', 'lecturer', 'really clever 2');
+VALUES ('lecturer2@example.com', 'pass', 'Lecturer 2', 'lecturer', '');
 
 INSERT INTO Webuser (email, password, full_name, user_type, notes)
-VALUES ('lecturer3@example.com', 'pass', 'Prof Lecturer 3', 'lecturer', 'really clever 3');
+VALUES ('lecturer3@example.com', 'pass', 'Lecturer 3', 'lecturer', '');
 
 
 /* add sample courses */
 INSERT INTO Course (course_code, title, notes)
-VALUES ('C1', 'Course Title 1', 'decent course');
+VALUES ('C1', 'Course 1', 'some note');
 
 INSERT INTO Course (course_code, title, notes)
-VALUES ('C2', 'Course Title 2', 'notes 2');
+VALUES ('C2', 'Course 2', '');
 
 INSERT INTO Course (course_code, title, notes)
-VALUES ('C3', 'Course Title 3', '');
+VALUES ('C3', 'Course 3', '');
 
 INSERT INTO Course (course_code, title, notes)
-VALUES ('C4', 'Course Title 4', 'course notes 4');
+VALUES ('C4', 'Course 4', '');
 
 /* assign lecturers to courses */
 INSERT INTO Lecturer (user_id, course_id)

@@ -22,7 +22,7 @@ function loadCharts() {
         $('#temperature-container').hide();
     }
     if(document.getElementById('checkbox-brightness').checked) {
-        var type = "light";
+        var type = "brightness";
         var id = "chart-brightness";
         getMeasurements(id, lectureId, type);
     }  else {
@@ -180,26 +180,26 @@ function getMeasurements(chartId, lectureId, type) {
                 var textY;
 
                 if(type == "temperature") {
-                    title = "Temperature - course name, lecture date etc (some ID lul, sweet) ";
+                    title = "Temperature - Lecture 1 (Course 1)";
                     textX = "Time";
                     textY = "Temperature (°C)";
-                } else if(type == "light") {
-                    title = "Brightness - course name, lecture date etc (some ID lul, sweet) ";
+                } else if(type == "brightness") {
+                    title = "Brightness - Lecture 1 (Course 1)";
                     textX = "Time";
-                    textY = "Brightness (whoKnowsWhat.. lumen mayb? kOhm naaah?)";
+                    textY = "Brightness (lux)";
                 }
                 if(dataArray.length == 0) {
                     alert("No " + type + " data for this lecture.");
                     if(type == "temperature") {
                         $('#temperature-container').hide();
-                    } else if(type == "light") {
+                    } else if(type == "brightness") {
                         $('#brightness-container').hide();
                     }
                 } else {
-                    drawChart(chartId, title, textX, textY, dataArray);
+                    drawChart(chartId, title, textX, textY, dataArray, type);
                     if(type == "temperature") {
                         $('#temperature-container').show();
-                    } else if(type == "light") {
+                    } else if(type == "brightness") {
                         $('#brightness-container').show();
                     }
                 }
@@ -250,11 +250,11 @@ function getFeedback() {
                     $('#feedback-container').show();
                 }
 
-                var title = "Question: " + $('#select-question option:selected').text();
+                var title = "First Lecture - " + $('#select-question option:selected').text();
                 var textX = "Time";
                 var textY = "Value";
                 var chartId = "chart-feedback";
-                drawChart(chartId, title, textX, textY, dataArray);
+                drawChart(chartId, title, textX, textY, dataArray, 'feedback');
             } else {
                 if('error' in resultObj) {
                     alert("Error: " + resultObj.error);
@@ -266,7 +266,16 @@ function getFeedback() {
 	});
 }
 
-function drawChart(id, title, textX, textY, data){
+function drawChart(id, title, textX, textY, data, type){
+    var unit = null;
+    if(type == 'feedback') {
+        unit = 'Answer';
+    } else if(type == 'temperature') {
+        unit = '°C';
+    } else if(type == 'brightness') {
+        unit = 'lux';
+    }
+
     Highcharts.chart(id, {
         chart: {
             zoomType: 'x'
@@ -321,7 +330,7 @@ function drawChart(id, title, textX, textY, data){
 
         series: [{
             type: 'area',
-            name: 'Temp (°C)',
+            name: unit,
             data: data
         }]
     });

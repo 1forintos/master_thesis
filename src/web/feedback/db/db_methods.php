@@ -118,7 +118,7 @@
 
 		# COMMENT
 		$sql = "
-			INSERT INTO Comment(lecture_id, comment)
+			INSERT INTO Comment(lecture_id, comment_text)
 			VALUES($1, $2)
 		";
 		$results[] = pg_prepare($GLOBALS['db'], "submit_comment", $sql);
