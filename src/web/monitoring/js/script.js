@@ -180,11 +180,11 @@ function getMeasurements(chartId, lectureId, type) {
                 var textY;
 
                 if(type == "temperature") {
-                    title = "Temperature - Lecture 1 (Course 1)";
+                    title = "Temperature - First Lecture (Course 4)";
                     textX = "Time";
                     textY = "Temperature (°C)";
                 } else if(type == "brightness") {
-                    title = "Brightness - Lecture 1 (Course 1)";
+                    title = "Brightness - First Lecture (Course 4)";
                     textX = "Time";
                     textY = "Brightness (lux)";
                 }
